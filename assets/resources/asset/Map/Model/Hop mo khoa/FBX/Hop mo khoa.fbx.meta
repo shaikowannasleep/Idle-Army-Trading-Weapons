@@ -1,0 +1,186 @@
+{
+  "ver": "2.3.14",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "bc158df1-56db-4193-bcfd-794eaa8a4f4b",
+  "files": [
+    "__original-animation-0.bin"
+  ],
+  "subMetas": {
+    "c6e33": {
+      "importer": "gltf-mesh",
+      "uuid": "bc158df1-56db-4193-bcfd-794eaa8a4f4b@c6e33",
+      "displayName": "",
+      "id": "c6e33",
+      "name": "Cube.002.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 236
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "bf318": {
+      "importer": "gltf-animation",
+      "uuid": "bc158df1-56db-4193-bcfd-794eaa8a4f4b@bf318",
+      "displayName": "",
+      "id": "bf318",
+      "name": "Hop mo khoa.animation",
+      "userData": {
+        "gltfIndex": 0,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 1
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "438fe": {
+      "importer": "gltf-skeleton",
+      "uuid": "bc158df1-56db-4193-bcfd-794eaa8a4f4b@438fe",
+      "displayName": "",
+      "id": "438fe",
+      "name": "UnnamedSkeleton.skeleton",
+      "userData": {
+        "gltfIndex": 0,
+        "jointsLength": 3
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "7d6ab": {
+      "importer": "texture",
+      "uuid": "bc158df1-56db-4193-bcfd-794eaa8a4f4b@7d6ab",
+      "displayName": "",
+      "id": "7d6ab",
+      "name": "base_color_texture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": false,
+        "imageUuidOrDatabaseUri": "db://assets/resources/asset/Map/Model/Hop mo khoa/Textures/Hop mo khoa nhan vien.png"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "a8b8b": {
+      "importer": "gltf-material",
+      "uuid": "bc158df1-56db-4193-bcfd-794eaa8a4f4b@a8b8b",
+      "displayName": "",
+      "id": "a8b8b",
+      "name": "Hop mo khoa nv.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "4563c": {
+      "importer": "gltf-scene",
+      "uuid": "bc158df1-56db-4193-bcfd-794eaa8a4f4b@4563c",
+      "displayName": "",
+      "id": "4563c",
+      "name": "Hop mo khoa.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "base_color_texture",
+        "uri": "db://assets/resources/asset/Map/Model/Hop mo khoa/Textures/Hop mo khoa nhan vien.png"
+      }
+    ],
+    "fbx": {
+      "smartMaterialEnabled": true
+    },
+    "animationImportSettings": [
+      {
+        "name": "Hop mo khoa",
+        "duration": 1,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Hop mo khoa",
+            "from": 0,
+            "to": 1,
+            "wrapMode": 2,
+            "previousId": "bf318"
+          }
+        ]
+      }
+    ],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "bc158df1-56db-4193-bcfd-794eaa8a4f4b@c6e33"
+      ],
+      "skeletons": [
+        "bc158df1-56db-4193-bcfd-794eaa8a4f4b@438fe"
+      ],
+      "textures": [
+        "bc158df1-56db-4193-bcfd-794eaa8a4f4b@7d6ab"
+      ],
+      "materials": [
+        "bc158df1-56db-4193-bcfd-794eaa8a4f4b@a8b8b"
+      ],
+      "scenes": [
+        "bc158df1-56db-4193-bcfd-794eaa8a4f4b@4563c"
+      ]
+    }
+  }
+}

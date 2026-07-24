@@ -1,0 +1,96 @@
+{
+  "ver": "2.3.14",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "25c25b06-351b-4007-8f44-e0daca5049f3",
+  "files": [],
+  "subMetas": {
+    "70943": {
+      "importer": "gltf-scene",
+      "uuid": "25c25b06-351b-4007-8f44-e0daca5049f3@70943",
+      "displayName": "",
+      "id": "70943",
+      "name": "Machine_2.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "4e629": {
+      "importer": "gltf-mesh",
+      "uuid": "25c25b06-351b-4007-8f44-e0daca5049f3@4e629",
+      "displayName": "",
+      "id": "4e629",
+      "name": "Cube.037.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 736
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "0e10c": {
+      "importer": "gltf-material",
+      "uuid": "25c25b06-351b-4007-8f44-e0daca5049f3@0e10c",
+      "displayName": "",
+      "id": "0e10c",
+      "name": "Material_Map 1-2_F.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [],
+    "fbx": {
+      "smartMaterialEnabled": true
+    },
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "25c25b06-351b-4007-8f44-e0daca5049f3@4e629"
+      ],
+      "skeletons": [],
+      "textures": [],
+      "materials": [
+        "25c25b06-351b-4007-8f44-e0daca5049f3@0e10c"
+      ],
+      "scenes": [
+        "25c25b06-351b-4007-8f44-e0daca5049f3@70943"
+      ]
+    }
+  }
+}

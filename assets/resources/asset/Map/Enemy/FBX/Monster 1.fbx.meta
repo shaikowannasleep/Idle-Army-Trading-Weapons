@@ -1,0 +1,662 @@
+{
+  "ver": "2.3.14",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "b702ec53-ec6a-46ae-912e-eceae951401a",
+  "files": [
+    "__original-animation-0.bin",
+    "__original-animation-1.bin",
+    "__original-animation-10.bin",
+    "__original-animation-11.bin",
+    "__original-animation-12.bin",
+    "__original-animation-2.bin",
+    "__original-animation-3.bin",
+    "__original-animation-4.bin",
+    "__original-animation-5.bin",
+    "__original-animation-6.bin",
+    "__original-animation-7.bin",
+    "__original-animation-8.bin",
+    "__original-animation-9.bin"
+  ],
+  "subMetas": {
+    "14285": {
+      "importer": "gltf-animation",
+      "uuid": "b702ec53-ec6a-46ae-912e-eceae951401a@14285",
+      "displayName": "",
+      "id": "14285",
+      "name": "Boss 1_Jump back.animation",
+      "userData": {
+        "gltfIndex": 9,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 1.100000023841858
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "75711": {
+      "importer": "gltf-animation",
+      "uuid": "b702ec53-ec6a-46ae-912e-eceae951401a@75711",
+      "displayName": "",
+      "id": "75711",
+      "name": "Boss 1_Spawn.animation",
+      "userData": {
+        "gltfIndex": 11,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 0.8666666746139526
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "79134": {
+      "importer": "gltf-animation",
+      "uuid": "b702ec53-ec6a-46ae-912e-eceae951401a@79134",
+      "displayName": "",
+      "id": "79134",
+      "name": "Boss 1_Combo.animation",
+      "userData": {
+        "gltfIndex": 6,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 2.933333396911621
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "e4017": {
+      "importer": "gltf-mesh",
+      "uuid": "b702ec53-ec6a-46ae-912e-eceae951401a@e4017",
+      "displayName": "",
+      "id": "e4017",
+      "name": "Cube.046.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 4353
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "6ec4f": {
+      "importer": "gltf-animation",
+      "uuid": "b702ec53-ec6a-46ae-912e-eceae951401a@6ec4f",
+      "displayName": "",
+      "id": "6ec4f",
+      "name": "A pose.animation",
+      "userData": {
+        "gltfIndex": 0,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 0.03333333507180214
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "0f626": {
+      "importer": "gltf-animation",
+      "uuid": "b702ec53-ec6a-46ae-912e-eceae951401a@0f626",
+      "displayName": "",
+      "id": "0f626",
+      "name": "Boss 1_Attack 1.animation",
+      "userData": {
+        "gltfIndex": 1,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 0.8333333134651184
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "62e1f": {
+      "importer": "gltf-animation",
+      "uuid": "b702ec53-ec6a-46ae-912e-eceae951401a@62e1f",
+      "displayName": "",
+      "id": "62e1f",
+      "name": "Boss 1_Attack 2.animation",
+      "userData": {
+        "gltfIndex": 2,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 0.8333333134651184
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "d6e2a": {
+      "importer": "gltf-animation",
+      "uuid": "b702ec53-ec6a-46ae-912e-eceae951401a@d6e2a",
+      "displayName": "",
+      "id": "d6e2a",
+      "name": "Boss 1_Attack 3.animation",
+      "userData": {
+        "gltfIndex": 3,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 1.4333332777023315
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "984db": {
+      "importer": "gltf-animation",
+      "uuid": "b702ec53-ec6a-46ae-912e-eceae951401a@984db",
+      "displayName": "",
+      "id": "984db",
+      "name": "Boss 1_Attack 4.animation",
+      "userData": {
+        "gltfIndex": 4,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 2
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "5cac4": {
+      "importer": "gltf-animation",
+      "uuid": "b702ec53-ec6a-46ae-912e-eceae951401a@5cac4",
+      "displayName": "",
+      "id": "5cac4",
+      "name": "Boss 1_Bi tan cong.animation",
+      "userData": {
+        "gltfIndex": 5,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 0.5
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "c1408": {
+      "importer": "gltf-animation",
+      "uuid": "b702ec53-ec6a-46ae-912e-eceae951401a@c1408",
+      "displayName": "",
+      "id": "c1408",
+      "name": "Boss 1_Die.animation",
+      "userData": {
+        "gltfIndex": 7,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 2.1666667461395264
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "03823": {
+      "importer": "gltf-animation",
+      "uuid": "b702ec53-ec6a-46ae-912e-eceae951401a@03823",
+      "displayName": "",
+      "id": "03823",
+      "name": "Boss 1_Idle.animation",
+      "userData": {
+        "gltfIndex": 8,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 2.6666667461395264
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "51dde": {
+      "importer": "gltf-animation",
+      "uuid": "b702ec53-ec6a-46ae-912e-eceae951401a@51dde",
+      "displayName": "",
+      "id": "51dde",
+      "name": "Boss 1_Jump forward.animation",
+      "userData": {
+        "gltfIndex": 10,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 0.8999999761581421
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "3e0e8": {
+      "importer": "gltf-animation",
+      "uuid": "b702ec53-ec6a-46ae-912e-eceae951401a@3e0e8",
+      "displayName": "",
+      "id": "3e0e8",
+      "name": "Boss 1_Stun.animation",
+      "userData": {
+        "gltfIndex": 12,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 2
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "438fe": {
+      "importer": "gltf-skeleton",
+      "uuid": "b702ec53-ec6a-46ae-912e-eceae951401a@438fe",
+      "displayName": "",
+      "id": "438fe",
+      "name": "UnnamedSkeleton.skeleton",
+      "userData": {
+        "gltfIndex": 0,
+        "jointsLength": 51
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "48b02": {
+      "importer": "gltf-embeded-image",
+      "uuid": "b702ec53-ec6a-46ae-912e-eceae951401a@48b02",
+      "displayName": "",
+      "id": "48b02",
+      "name": "base_color_texture.image",
+      "userData": {
+        "gltfIndex": 0,
+        "fixAlphaTransparencyArtifacts": true,
+        "hasAlpha": true,
+        "type": "texture"
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".json",
+        ".png"
+      ],
+      "subMetas": {}
+    },
+    "7d6ab": {
+      "importer": "texture",
+      "uuid": "b702ec53-ec6a-46ae-912e-eceae951401a@7d6ab",
+      "displayName": "",
+      "id": "7d6ab",
+      "name": "base_color_texture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "b702ec53-ec6a-46ae-912e-eceae951401a@48b02"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "20e7c": {
+      "importer": "gltf-material",
+      "uuid": "b702ec53-ec6a-46ae-912e-eceae951401a@20e7c",
+      "displayName": "",
+      "id": "20e7c",
+      "name": "Boss 2.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "5a311": {
+      "importer": "gltf-scene",
+      "uuid": "b702ec53-ec6a-46ae-912e-eceae951401a@5a311",
+      "displayName": "",
+      "id": "5a311",
+      "name": "Monster 1.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "base_color_texture",
+        "uri": "b702ec53-ec6a-46ae-912e-eceae951401a@48b02"
+      }
+    ],
+    "fbx": {
+      "smartMaterialEnabled": true
+    },
+    "animationImportSettings": [
+      {
+        "name": "A pose",
+        "duration": 0.03333333507180214,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "A pose",
+            "from": 0,
+            "to": 0.03333333507180214,
+            "wrapMode": 2,
+            "previousId": "6ec4f"
+          }
+        ]
+      },
+      {
+        "name": "Boss 1_Attack 1",
+        "duration": 0.8333333134651184,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Boss 1_Attack 1",
+            "from": 0,
+            "to": 0.8333333134651184,
+            "wrapMode": 2,
+            "previousId": "0f626"
+          }
+        ]
+      },
+      {
+        "name": "Boss 1_Attack 2",
+        "duration": 0.8333333134651184,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Boss 1_Attack 2",
+            "from": 0,
+            "to": 0.8333333134651184,
+            "wrapMode": 2,
+            "previousId": "62e1f"
+          }
+        ]
+      },
+      {
+        "name": "Boss 1_Attack 3",
+        "duration": 1.4333332777023315,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Boss 1_Attack 3",
+            "from": 0,
+            "to": 1.4333332777023315,
+            "wrapMode": 2,
+            "previousId": "d6e2a"
+          }
+        ]
+      },
+      {
+        "name": "Boss 1_Attack 4",
+        "duration": 2,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Boss 1_Attack 4",
+            "from": 0,
+            "to": 2,
+            "wrapMode": 2,
+            "previousId": "984db"
+          }
+        ]
+      },
+      {
+        "name": "Boss 1_Bi tan cong",
+        "duration": 0.5,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Boss 1_Bi tan cong",
+            "from": 0,
+            "to": 0.5,
+            "wrapMode": 2,
+            "previousId": "5cac4"
+          }
+        ]
+      },
+      {
+        "name": "Boss 1_Combo",
+        "duration": 2.933333396911621,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Boss 1_Combo",
+            "from": 0,
+            "to": 2.933333396911621,
+            "wrapMode": 2,
+            "previousId": "79134"
+          }
+        ]
+      },
+      {
+        "name": "Boss 1_Die",
+        "duration": 2.1666667461395264,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Boss 1_Die",
+            "from": 0,
+            "to": 2.1666667461395264,
+            "wrapMode": 2,
+            "previousId": "c1408"
+          }
+        ]
+      },
+      {
+        "name": "Boss 1_Idle",
+        "duration": 2.6666667461395264,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Boss 1_Idle",
+            "from": 0,
+            "to": 2.6666667461395264,
+            "wrapMode": 2,
+            "previousId": "03823"
+          }
+        ]
+      },
+      {
+        "name": "Boss 1_Jump back",
+        "duration": 1.100000023841858,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Boss 1_Jump back",
+            "from": 0,
+            "to": 1.100000023841858,
+            "wrapMode": 2,
+            "previousId": "14285"
+          }
+        ]
+      },
+      {
+        "name": "Boss 1_Jump forward",
+        "duration": 0.8999999761581421,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Boss 1_Jump forward",
+            "from": 0,
+            "to": 0.8999999761581421,
+            "wrapMode": 2,
+            "previousId": "51dde"
+          }
+        ]
+      },
+      {
+        "name": "Boss 1_Spawn",
+        "duration": 0.8666666746139526,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Boss 1_Spawn",
+            "from": 0,
+            "to": 0.8666666746139526,
+            "wrapMode": 2,
+            "previousId": "75711"
+          }
+        ]
+      },
+      {
+        "name": "Boss 1_Stun",
+        "duration": 2,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Boss 1_Stun",
+            "from": 0,
+            "to": 2,
+            "wrapMode": 2,
+            "previousId": "3e0e8"
+          }
+        ]
+      }
+    ],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "b702ec53-ec6a-46ae-912e-eceae951401a@e4017"
+      ],
+      "skeletons": [
+        "b702ec53-ec6a-46ae-912e-eceae951401a@438fe"
+      ],
+      "textures": [
+        "b702ec53-ec6a-46ae-912e-eceae951401a@7d6ab"
+      ],
+      "materials": [
+        "b702ec53-ec6a-46ae-912e-eceae951401a@20e7c"
+      ],
+      "scenes": [
+        "b702ec53-ec6a-46ae-912e-eceae951401a@5a311"
+      ]
+    }
+  }
+}

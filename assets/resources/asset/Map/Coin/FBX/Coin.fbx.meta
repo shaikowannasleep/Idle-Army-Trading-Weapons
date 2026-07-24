@@ -1,0 +1,206 @@
+{
+  "ver": "2.3.14",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "5e6921c6-fb5b-4675-888b-81fa94295b5c",
+  "files": [
+    "__original-animation-0.bin"
+  ],
+  "subMetas": {
+    "c244a": {
+      "importer": "gltf-mesh",
+      "uuid": "5e6921c6-fb5b-4675-888b-81fa94295b5c@c244a",
+      "displayName": "",
+      "id": "c244a",
+      "name": "Cylinder.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 140
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "3723e": {
+      "importer": "gltf-animation",
+      "uuid": "5e6921c6-fb5b-4675-888b-81fa94295b5c@3723e",
+      "displayName": "",
+      "id": "3723e",
+      "name": "Coin.animation",
+      "userData": {
+        "gltfIndex": 0,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 1
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "438fe": {
+      "importer": "gltf-skeleton",
+      "uuid": "5e6921c6-fb5b-4675-888b-81fa94295b5c@438fe",
+      "displayName": "",
+      "id": "438fe",
+      "name": "UnnamedSkeleton.skeleton",
+      "userData": {
+        "gltfIndex": 0,
+        "jointsLength": 1
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "48b02": {
+      "importer": "gltf-embeded-image",
+      "uuid": "5e6921c6-fb5b-4675-888b-81fa94295b5c@48b02",
+      "displayName": "",
+      "id": "48b02",
+      "name": "base_color_texture.image",
+      "userData": {
+        "gltfIndex": 0,
+        "fixAlphaTransparencyArtifacts": true,
+        "hasAlpha": true,
+        "type": "texture"
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".json",
+        ".png"
+      ],
+      "subMetas": {}
+    },
+    "7d6ab": {
+      "importer": "texture",
+      "uuid": "5e6921c6-fb5b-4675-888b-81fa94295b5c@7d6ab",
+      "displayName": "",
+      "id": "7d6ab",
+      "name": "base_color_texture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "5e6921c6-fb5b-4675-888b-81fa94295b5c@48b02"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "6d270": {
+      "importer": "gltf-material",
+      "uuid": "5e6921c6-fb5b-4675-888b-81fa94295b5c@6d270",
+      "displayName": "",
+      "id": "6d270",
+      "name": "Texture_Palettes.002.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "4b8b9": {
+      "importer": "gltf-scene",
+      "uuid": "5e6921c6-fb5b-4675-888b-81fa94295b5c@4b8b9",
+      "displayName": "",
+      "id": "4b8b9",
+      "name": "Coin.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "base_color_texture",
+        "uri": "5e6921c6-fb5b-4675-888b-81fa94295b5c@48b02"
+      }
+    ],
+    "fbx": {
+      "smartMaterialEnabled": true
+    },
+    "animationImportSettings": [
+      {
+        "name": "Coin",
+        "duration": 1,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Coin",
+            "from": 0,
+            "to": 1,
+            "wrapMode": 2,
+            "previousId": "3723e"
+          }
+        ]
+      }
+    ],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "5e6921c6-fb5b-4675-888b-81fa94295b5c@c244a"
+      ],
+      "skeletons": [
+        "5e6921c6-fb5b-4675-888b-81fa94295b5c@438fe"
+      ],
+      "textures": [
+        "5e6921c6-fb5b-4675-888b-81fa94295b5c@7d6ab"
+      ],
+      "materials": [
+        "5e6921c6-fb5b-4675-888b-81fa94295b5c@6d270"
+      ],
+      "scenes": [
+        "5e6921c6-fb5b-4675-888b-81fa94295b5c@4b8b9"
+      ]
+    }
+  }
+}

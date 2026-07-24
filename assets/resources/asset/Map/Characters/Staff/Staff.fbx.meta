@@ -1,0 +1,1060 @@
+{
+  "ver": "2.3.14",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b",
+  "files": [
+    "__original-animation-0.bin",
+    "__original-animation-1.bin",
+    "__original-animation-10.bin",
+    "__original-animation-11.bin",
+    "__original-animation-12.bin",
+    "__original-animation-13.bin",
+    "__original-animation-2.bin",
+    "__original-animation-3.bin",
+    "__original-animation-4.bin",
+    "__original-animation-5.bin",
+    "__original-animation-6.bin",
+    "__original-animation-7.bin",
+    "__original-animation-8.bin",
+    "__original-animation-9.bin"
+  ],
+  "subMetas": {
+    "13347": {
+      "importer": "gltf-animation",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@13347",
+      "displayName": "",
+      "id": "13347",
+      "name": "Combo.animation",
+      "userData": {
+        "gltfIndex": 3,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 3
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "30732": {
+      "importer": "gltf-skeleton",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@30732",
+      "displayName": "",
+      "id": "30732",
+      "name": "UnnamedSkeleton-0.skeleton",
+      "userData": {
+        "gltfIndex": 0,
+        "jointsLength": 32
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "cc696": {
+      "importer": "gltf-mesh",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@cc696",
+      "displayName": "",
+      "id": "cc696",
+      "name": "Mesh.047.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 354
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "687fe": {
+      "importer": "gltf-mesh",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@687fe",
+      "displayName": "",
+      "id": "687fe",
+      "name": "Mesh.097.mesh",
+      "userData": {
+        "gltfIndex": 1,
+        "triangleCount": 64
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "b46eb": {
+      "importer": "gltf-mesh",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@b46eb",
+      "displayName": "",
+      "id": "b46eb",
+      "name": "Mesh.004.mesh",
+      "userData": {
+        "gltfIndex": 2,
+        "triangleCount": 240
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "1bb55": {
+      "importer": "gltf-mesh",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@1bb55",
+      "displayName": "",
+      "id": "1bb55",
+      "name": "Mesh.048.mesh",
+      "userData": {
+        "gltfIndex": 3,
+        "triangleCount": 1344
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "53fae": {
+      "importer": "gltf-mesh",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@53fae",
+      "displayName": "",
+      "id": "53fae",
+      "name": "Mesh.046.mesh",
+      "userData": {
+        "gltfIndex": 4,
+        "triangleCount": 891
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "6ec4f": {
+      "importer": "gltf-animation",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@6ec4f",
+      "displayName": "",
+      "id": "6ec4f",
+      "name": "A pose.animation",
+      "userData": {
+        "gltfIndex": 0,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 0.03333333507180214
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "2cd1c": {
+      "importer": "gltf-animation",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@2cd1c",
+      "displayName": "",
+      "id": "2cd1c",
+      "name": "Attack.animation",
+      "userData": {
+        "gltfIndex": 1,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 0.9333333373069763
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "5598b": {
+      "importer": "gltf-animation",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@5598b",
+      "displayName": "",
+      "id": "5598b",
+      "name": "Bi tan cong.animation",
+      "userData": {
+        "gltfIndex": 2,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 0.46666666865348816
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "caf09": {
+      "importer": "gltf-animation",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@caf09",
+      "displayName": "",
+      "id": "caf09",
+      "name": "Dao mo.animation",
+      "userData": {
+        "gltfIndex": 4,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 3.5
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "c2696": {
+      "importer": "gltf-animation",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@c2696",
+      "displayName": "",
+      "id": "c2696",
+      "name": "Idle.animation",
+      "userData": {
+        "gltfIndex": 5,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 1.3333333730697632
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "29b1c": {
+      "importer": "gltf-animation",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@29b1c",
+      "displayName": "",
+      "id": "29b1c",
+      "name": "Idle tren xe.animation",
+      "userData": {
+        "gltfIndex": 6,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 2.6666667461395264
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "67d5f": {
+      "importer": "gltf-animation",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@67d5f",
+      "displayName": "",
+      "id": "67d5f",
+      "name": "Jump back.animation",
+      "userData": {
+        "gltfIndex": 7,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 1.3666666746139526
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "a8010": {
+      "importer": "gltf-animation",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@a8010",
+      "displayName": "",
+      "id": "a8010",
+      "name": "Jump Forward_Export.animation",
+      "userData": {
+        "gltfIndex": 8,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 1.0666667222976685
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "5f8df": {
+      "importer": "gltf-animation",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@5f8df",
+      "displayName": "",
+      "id": "5f8df",
+      "name": "Move 1.animation",
+      "userData": {
+        "gltfIndex": 9,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 0.5333333611488342
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "bcbfc": {
+      "importer": "gltf-animation",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@bcbfc",
+      "displayName": "",
+      "id": "bcbfc",
+      "name": "Be do.animation",
+      "userData": {
+        "gltfIndex": 10,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 0.5333333611488342
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "3ffee": {
+      "importer": "gltf-animation",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@3ffee",
+      "displayName": "",
+      "id": "3ffee",
+      "name": "Stun.animation",
+      "userData": {
+        "gltfIndex": 11,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 2.6666667461395264
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "81acc": {
+      "importer": "gltf-animation",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@81acc",
+      "displayName": "",
+      "id": "81acc",
+      "name": "Manufacture.animation",
+      "userData": {
+        "gltfIndex": 12,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 1
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "e8a1d": {
+      "importer": "gltf-animation",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@e8a1d",
+      "displayName": "",
+      "id": "e8a1d",
+      "name": "Nhay xuong xe.animation",
+      "userData": {
+        "gltfIndex": 13,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 1
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "f1394": {
+      "importer": "gltf-skeleton",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@f1394",
+      "displayName": "",
+      "id": "f1394",
+      "name": "UnnamedSkeleton-1.skeleton",
+      "userData": {
+        "gltfIndex": 1,
+        "jointsLength": 32
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "75ee4": {
+      "importer": "gltf-skeleton",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@75ee4",
+      "displayName": "",
+      "id": "75ee4",
+      "name": "UnnamedSkeleton-2.skeleton",
+      "userData": {
+        "gltfIndex": 2,
+        "jointsLength": 32
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "a72ab": {
+      "importer": "gltf-skeleton",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@a72ab",
+      "displayName": "",
+      "id": "a72ab",
+      "name": "UnnamedSkeleton-3.skeleton",
+      "userData": {
+        "gltfIndex": 3,
+        "jointsLength": 32
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "2224c": {
+      "importer": "gltf-skeleton",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@2224c",
+      "displayName": "",
+      "id": "2224c",
+      "name": "UnnamedSkeleton-4.skeleton",
+      "userData": {
+        "gltfIndex": 4,
+        "jointsLength": 32
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "5e49e": {
+      "importer": "gltf-embeded-image",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@5e49e",
+      "displayName": "",
+      "id": "5e49e",
+      "name": "base_color_texture-0.image",
+      "userData": {
+        "gltfIndex": 0,
+        "fixAlphaTransparencyArtifacts": true,
+        "hasAlpha": true,
+        "type": "texture"
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".json",
+        ".png"
+      ],
+      "subMetas": {}
+    },
+    "ef396": {
+      "importer": "gltf-embeded-image",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@ef396",
+      "displayName": "",
+      "id": "ef396",
+      "name": "base_color_texture-1.image",
+      "userData": {
+        "gltfIndex": 1,
+        "fixAlphaTransparencyArtifacts": true,
+        "hasAlpha": true,
+        "type": "texture"
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".json",
+        ".png"
+      ],
+      "subMetas": {}
+    },
+    "0991f": {
+      "importer": "gltf-embeded-image",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@0991f",
+      "displayName": "",
+      "id": "0991f",
+      "name": "base_color_texture-2.image",
+      "userData": {
+        "gltfIndex": 2,
+        "fixAlphaTransparencyArtifacts": true,
+        "hasAlpha": true,
+        "type": "texture"
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".json",
+        ".png"
+      ],
+      "subMetas": {}
+    },
+    "84cbb": {
+      "importer": "gltf-embeded-image",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@84cbb",
+      "displayName": "",
+      "id": "84cbb",
+      "name": "base_color_texture-3.image",
+      "userData": {
+        "gltfIndex": 3,
+        "fixAlphaTransparencyArtifacts": true,
+        "hasAlpha": true,
+        "type": "texture"
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".json",
+        ".png"
+      ],
+      "subMetas": {}
+    },
+    "0a1ef": {
+      "importer": "texture",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@0a1ef",
+      "displayName": "",
+      "id": "0a1ef",
+      "name": "base_color_texture-0.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "25307014-8bb4-47b8-8071-09f2be5e9a5b@5e49e"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "05da8": {
+      "importer": "texture",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@05da8",
+      "displayName": "",
+      "id": "05da8",
+      "name": "base_color_texture-1.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "25307014-8bb4-47b8-8071-09f2be5e9a5b@ef396"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "b8518": {
+      "importer": "texture",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@b8518",
+      "displayName": "",
+      "id": "b8518",
+      "name": "base_color_texture-2.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "25307014-8bb4-47b8-8071-09f2be5e9a5b@0991f"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "97b5c": {
+      "importer": "texture",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@97b5c",
+      "displayName": "",
+      "id": "97b5c",
+      "name": "base_color_texture-3.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "25307014-8bb4-47b8-8071-09f2be5e9a5b@84cbb"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "57eb5": {
+      "importer": "gltf-material",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@57eb5",
+      "displayName": "",
+      "id": "57eb5",
+      "name": "1.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "1043e": {
+      "importer": "gltf-material",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@1043e",
+      "displayName": "",
+      "id": "1043e",
+      "name": "Material.002.material",
+      "userData": {
+        "gltfIndex": 1
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "a72cb": {
+      "importer": "gltf-material",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@a72cb",
+      "displayName": "",
+      "id": "a72cb",
+      "name": "Texture test.001.material",
+      "userData": {
+        "gltfIndex": 2
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "29e0d": {
+      "importer": "gltf-material",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@29e0d",
+      "displayName": "",
+      "id": "29e0d",
+      "name": "2.material",
+      "userData": {
+        "gltfIndex": 3
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "14ccc": {
+      "importer": "gltf-material",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@14ccc",
+      "displayName": "",
+      "id": "14ccc",
+      "name": "energy.001.material",
+      "userData": {
+        "gltfIndex": 4
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "28bdd": {
+      "importer": "gltf-scene",
+      "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@28bdd",
+      "displayName": "",
+      "id": "28bdd",
+      "name": "Staff.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "base_color_texture",
+        "uri": "25307014-8bb4-47b8-8071-09f2be5e9a5b@5e49e"
+      },
+      {
+        "name": "base_color_texture",
+        "uri": "25307014-8bb4-47b8-8071-09f2be5e9a5b@ef396"
+      },
+      {
+        "name": "base_color_texture",
+        "uri": "25307014-8bb4-47b8-8071-09f2be5e9a5b@0991f"
+      },
+      {
+        "name": "base_color_texture",
+        "uri": "25307014-8bb4-47b8-8071-09f2be5e9a5b@84cbb"
+      }
+    ],
+    "fbx": {
+      "smartMaterialEnabled": true
+    },
+    "animationImportSettings": [
+      {
+        "name": "A pose",
+        "duration": 0.03333333507180214,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "A pose",
+            "from": 0,
+            "to": 0.03333333507180214,
+            "wrapMode": 2,
+            "previousId": "6ec4f"
+          }
+        ]
+      },
+      {
+        "name": "Attack",
+        "duration": 0.9333333373069763,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Attack",
+            "from": 0,
+            "to": 0.9333333373069763,
+            "wrapMode": 2,
+            "previousId": "2cd1c"
+          }
+        ]
+      },
+      {
+        "name": "Bi tan cong",
+        "duration": 0.46666666865348816,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Bi tan cong",
+            "from": 0,
+            "to": 0.46666666865348816,
+            "wrapMode": 2,
+            "previousId": "5598b"
+          }
+        ]
+      },
+      {
+        "name": "Combo",
+        "duration": 3,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Combo",
+            "from": 0,
+            "to": 3,
+            "wrapMode": 2,
+            "previousId": "13347"
+          }
+        ]
+      },
+      {
+        "name": "Dao mo",
+        "duration": 3.5,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Dao mo",
+            "from": 0,
+            "to": 3.5,
+            "wrapMode": 2,
+            "previousId": "caf09"
+          }
+        ]
+      },
+      {
+        "name": "Idle",
+        "duration": 1.3333333730697632,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Idle",
+            "from": 0,
+            "to": 1.3333333730697632,
+            "wrapMode": 2,
+            "previousId": "c2696"
+          }
+        ]
+      },
+      {
+        "name": "Idle tren xe",
+        "duration": 2.6666667461395264,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Idle tren xe",
+            "from": 0,
+            "to": 2.6666667461395264,
+            "wrapMode": 2,
+            "previousId": "29b1c"
+          }
+        ]
+      },
+      {
+        "name": "Jump back",
+        "duration": 1.3666666746139526,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Jump back",
+            "from": 0,
+            "to": 1.3666666746139526,
+            "wrapMode": 2,
+            "previousId": "67d5f"
+          }
+        ]
+      },
+      {
+        "name": "Jump Forward_Export",
+        "duration": 1.0666667222976685,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Jump Forward_Export",
+            "from": 0,
+            "to": 1.0666667222976685,
+            "wrapMode": 2,
+            "previousId": "a8010"
+          }
+        ]
+      },
+      {
+        "name": "Move 1",
+        "duration": 0.5333333611488342,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Move 1",
+            "from": 0,
+            "to": 0.5333333611488342,
+            "wrapMode": 2,
+            "previousId": "5f8df"
+          }
+        ]
+      },
+      {
+        "name": "Be do",
+        "duration": 0.5333333611488342,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Be do",
+            "from": 0,
+            "to": 0.5333333611488342,
+            "wrapMode": 2,
+            "previousId": "bcbfc"
+          }
+        ]
+      },
+      {
+        "name": "Stun",
+        "duration": 2.6666667461395264,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Stun",
+            "from": 0,
+            "to": 2.6666667461395264,
+            "wrapMode": 2,
+            "previousId": "3ffee"
+          }
+        ]
+      },
+      {
+        "name": "Manufacture",
+        "duration": 1,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Manufacture",
+            "from": 0,
+            "to": 1,
+            "wrapMode": 2,
+            "previousId": "81acc"
+          }
+        ]
+      },
+      {
+        "name": "Nhay xuong xe",
+        "duration": 1,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "Nhay xuong xe",
+            "from": 0,
+            "to": 1,
+            "wrapMode": 2,
+            "previousId": "e8a1d"
+          }
+        ]
+      }
+    ],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "25307014-8bb4-47b8-8071-09f2be5e9a5b@cc696",
+        "25307014-8bb4-47b8-8071-09f2be5e9a5b@687fe",
+        "25307014-8bb4-47b8-8071-09f2be5e9a5b@b46eb",
+        "25307014-8bb4-47b8-8071-09f2be5e9a5b@1bb55",
+        "25307014-8bb4-47b8-8071-09f2be5e9a5b@53fae"
+      ],
+      "skeletons": [
+        "25307014-8bb4-47b8-8071-09f2be5e9a5b@30732",
+        "25307014-8bb4-47b8-8071-09f2be5e9a5b@f1394",
+        "25307014-8bb4-47b8-8071-09f2be5e9a5b@75ee4",
+        "25307014-8bb4-47b8-8071-09f2be5e9a5b@a72ab",
+        "25307014-8bb4-47b8-8071-09f2be5e9a5b@2224c"
+      ],
+      "textures": [
+        "25307014-8bb4-47b8-8071-09f2be5e9a5b@0a1ef",
+        "25307014-8bb4-47b8-8071-09f2be5e9a5b@05da8",
+        "25307014-8bb4-47b8-8071-09f2be5e9a5b@b8518",
+        "25307014-8bb4-47b8-8071-09f2be5e9a5b@97b5c"
+      ],
+      "materials": [
+        "25307014-8bb4-47b8-8071-09f2be5e9a5b@57eb5",
+        "25307014-8bb4-47b8-8071-09f2be5e9a5b@1043e",
+        "25307014-8bb4-47b8-8071-09f2be5e9a5b@a72cb",
+        "25307014-8bb4-47b8-8071-09f2be5e9a5b@29e0d",
+        "25307014-8bb4-47b8-8071-09f2be5e9a5b@14ccc"
+      ],
+      "scenes": [
+        "25307014-8bb4-47b8-8071-09f2be5e9a5b@28bdd"
+      ]
+    }
+  }
+}

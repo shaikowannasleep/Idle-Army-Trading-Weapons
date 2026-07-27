@@ -50,7 +50,7 @@
       "name": "Boss 1_Spawn.animation",
       "userData": {
         "gltfIndex": 11,
-        "wrapMode": 2,
+        "wrapMode": 1,
         "sample": 30,
         "span": {
           "from": 0,
@@ -609,7 +609,7 @@
             "name": "Boss 1_Spawn",
             "from": 0,
             "to": 0.8666666746139526,
-            "wrapMode": 2,
+            "wrapMode": 1,
             "previousId": "75711"
           }
         ]

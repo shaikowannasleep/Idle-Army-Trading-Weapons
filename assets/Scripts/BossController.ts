@@ -18,9 +18,11 @@ export class BossController extends Component {
 
     start() {
         if (this.anim) {
-            // Chơi animation Spawn
-            this.anim.play('Boss 1_Spawn');
-            
+          let state=this.anim.getState("Boss 1_Spawn");
+
+state.speed=0.45;
+
+this.anim.play("Boss 1_Spawn");
             // Lắng nghe sự kiện khi anim Spawn kết thúc
             this.anim.once(SkeletalAnimation.EventType.FINISHED, () => {
                 // Chuyển sang trạng thái Idle

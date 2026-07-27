@@ -34,7 +34,7 @@ export class super_html_playable {
     /**
      * 设置商店地址
      * channel : unity
-     * @param url https://play.google.com/store/apps/details?id=com.unity3d.auicreativetestapp
+     * @param url https://play.google.com/store/apps/details?id=com.unimob.idle.army
      */
     set_google_play_url(url: string) {
         //@ts-ignore

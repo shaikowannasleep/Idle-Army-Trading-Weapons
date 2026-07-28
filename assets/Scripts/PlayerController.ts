@@ -1,71 +1,196 @@
-import { _decorator, Component, Node, Vec3, tween } from 'cc';
+import {
+    _decorator,
+    Node
+} from 'cc';
+
 import { GameManager } from './GameManager';
 import { UnitController } from './UnitController';
+import { MovableActor } from './MovableActor';
+
 const { ccclass, property } = _decorator;
 
 @ccclass('PlayerController')
-export class PlayerController extends Component {
-    private state: string = 'idle';
-    private targetUnit: UnitController = null;
-    private heldWeapon: string = null;
+export class PlayerController extends MovableActor {
 
-    @property(Node) counterPos: Node = null;
-    @property(Node) pistolRackPos: Node = null;
-    @property(Node) akRackPos: Node = null;
+    @property(Node)
+    pistolRack: Node = null!;
 
-    update(dt: number) {
-        if (GameManager.Instance.unlockLevel === 0) return;
+    @property(Node)
+    akRack: Node = null!;
 
-        if (this.state === 'idle') {
-            this.findNextCustomer();
+    private target: UnitController = null;
+
+    private holdingWeapon = "";
+
+    private busy = false;
+
+    update() {
+
+        if (this.busy)
+            return;
+
+        this.findCustomer();
+
+    }
+
+    //------------------------------------------------
+    // Chỉ chọn đúng NPC đang đứng đầu hàng (queueIndex 0) và đã tới nơi (state == "queue").
+
+    findCustomer() {
+
+        const list = GameManager.Instance.activeUnits.filter(u =>
+
+            u.state == "queue" && u.queueIndex == 0
+
+        );
+
+        if (list.length == 0)
+            return;
+
+        this.target = list[0];
+
+        this.busy = true;
+
+        // Ra lệnh cho NPC tự di chuyển, Player không setPosition/tween NPC.
+        this.target.moveToCounter(() => {
+
+            this.scheduleOnce(() => {
+
+                this.askCustomer();
+
+            }, 0.3);
+
+        });
+
+        this.moveToCounter();
+
+    }
+
+    //------------------------------------------------
+
+    moveToCounter() {
+
+        this.moveTo(GameManager.Instance.staffCounter.worldPosition, 0.45, () => {
+
+            if (this.target)
+                this.lookAtTarget(this.target.node.worldPosition);
+
+        });
+
+    }
+
+    //------------------------------------------------
+
+    askCustomer() {
+
+        if (!this.target) {
+
+            this.resetWorker();
+
+            return;
+
         }
+
+        if (GameManager.Instance.unlockLevel >= 2)
+            this.target.desiredWeapon = "AK";
+        else
+            this.target.desiredWeapon = "Pistol";
+
+        this.moveToRack();
+
     }
 
-    findNextCustomer() {
-        let queuedUnits = GameManager.Instance.activeUnits.filter(u => u.state === 'waiting');
-        if (queuedUnits.length > 0) {
-            this.targetUnit = queuedUnits[0];
-            this.targetUnit.state = 'being_asked';
-            this.state = 'moving_to_ask';
-            
-            this.moveTo(this.counterPos.position, 'asking', 1.0); // Tốn 1s để hỏi
+    //------------------------------------------------
+
+    moveToRack() {
+
+        const rack =
+
+            this.target.desiredWeapon == "AK"
+
+                ? this.akRack
+
+                : this.pistolRack;
+
+        this.moveTo(rack.worldPosition, 0.45, () => {
+
+            this.playAnim("Craft");
+
+            this.scheduleOnce(() => {
+
+                this.finishCraft();
+
+            }, 1.2);
+
+        });
+
+    }
+
+    //------------------------------------------------
+
+    finishCraft() {
+
+        this.holdingWeapon =
+
+            this.target.desiredWeapon;
+
+        this.moveDeliver();
+
+    }
+
+    //------------------------------------------------
+
+    moveDeliver() {
+
+        this.moveTo(GameManager.Instance.staffCounter.worldPosition, 0.45, () => {
+
+            if (this.target)
+                this.lookAtTarget(this.target.node.worldPosition);
+
+            this.scheduleOnce(() => {
+
+                this.deliver();
+
+            }, 0.25);
+
+        });
+
+    }
+
+    //------------------------------------------------
+
+    deliver() {
+
+        if (!this.target) {
+
+            this.resetWorker();
+
+            return;
+
         }
+
+        this.target.receiveWeapon(
+
+            this.holdingWeapon
+
+        );
+
+        this.resetWorker();
+
     }
 
-    moveTo(targetPos: Vec3, nextState: string, actionDelay: number) {
-        tween(this.node.position)
-            .to(0.5, targetPos) // Di chuyển mất 0.5s
-            .call(() => {
-                // Tới nơi thì chạy thanh loading (chờ actionDelay giây)
-                this.scheduleOnce(() => {
-                    this.state = nextState;
-                    this.handleNextState();
-                }, actionDelay);
-            })
-            .start();
+    //------------------------------------------------
+
+    resetWorker() {
+
+        this.busy = false;
+
+        this.target = null;
+
+        this.holdingWeapon = "";
+
+        this.playAnim("Idle");
+
     }
 
-    handleNextState() {
-        if (this.state === 'asking') {
-            // Xác định súng khách muốn dựa trên unlockLevel
-            let weaponToCraft = (GameManager.Instance.unlockLevel >= 2) ? 'AK' : 'Pistol';
-            this.targetUnit.desiredWeapon = weaponToCraft;
-            this.targetUnit.state = 'waiting_weapon';
-            
-            let rackPos = (weaponToCraft === 'AK') ? this.akRackPos.position : this.pistolRackPos.position;
-            this.state = 'moving_to_rack';
-            this.moveTo(rackPos, 'crafting', 1.5); // Tốn 1.5s để chế súng
-            
-        } else if (this.state === 'crafting') {
-            this.heldWeapon = this.targetUnit.desiredWeapon;
-            this.state = 'moving_to_deliver';
-            this.moveTo(this.counterPos.position, 'delivering', 0.2);
-            
-        } else if (this.state === 'delivering') {
-            this.targetUnit.receiveWeapon(this.heldWeapon);
-            this.heldWeapon = null;
-            this.targetUnit = null;
-            this.state = 'idle'; // Quay lại từ đầu vòng lặp
-        }
-    }
 }

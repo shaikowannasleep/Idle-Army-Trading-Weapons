@@ -1815,14 +1815,14 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "2",
+    "_name": "Pistol",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_parent": {
       "__id__": 1
     },
     "_children": [],
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 62
@@ -1943,14 +1943,14 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "3",
+    "_name": "AK",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_parent": {
       "__id__": 1
     },
     "_children": [],
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 67
@@ -2272,6 +2272,16 @@
     "__prefab": {
       "__id__": 79
     },
+    "anim": {
+      "__id__": 76
+    },
+    "pistolWeapon": {
+      "__id__": 61
+    },
+    "akWeapon": {
+      "__id__": 66
+    },
+    "moveSpeed": 3,
     "_id": ""
   },
   {
@@ -2287,6 +2297,7 @@
       "__id__": 0
     },
     "fileId": "e9aOFbq0RMp7HTxg2kAIQp",
+    "instance": null,
     "targetOverrides": null
   }
 ]

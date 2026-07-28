@@ -1,107 +1,302 @@
-import { _decorator, Component, Node, Vec3, tween } from 'cc';
+import {
+    _decorator,
+    Node,
+    Vec3
+} from 'cc';
+
 import { GameManager } from './GameManager';
 import { BossController } from './BossController';
-import { SlotData } from './SlotData'; // Thêm dòng import này
+import { SlotData } from './SlotData';
+import { MovableActor } from './MovableActor';
+
 const { ccclass, property } = _decorator;
 
+// walking -> queue -> moveCounter -> counterWaiting -> moveAttack -> attacking -> dead
+export enum UnitState {
+    WALKING,
+    QUEUE,
+    MOVE_COUNTER,
+    COUNTER_WAITING,
+    MOVE_ATTACK,
+    ATTACK,
+    DEAD
+}
+
 @ccclass('UnitController')
-export class UnitController extends Component {
-    public state: string = 'walking_in';
-    public desiredWeapon: string = 'Pistol';
-    
-    private hp: number = 60;
-    private attackCooldown: number = 0;
-    public assignedSlotNode: Node = null;
+export class UnitController extends MovableActor {
+
+    public state: string = "walking";
+
+    public desiredWeapon = "Pistol";
+
+    public hp = 60;
+
+    @property(Node)
+    pistolWeapon: Node = null!;
+
+    @property(Node)
+    akWeapon: Node = null!;
+
+    @property
+    moveSpeed: number = 1.2;
+
+    public queueIndex: number = -1;
+
+    private attackTimer = 0;
+
+    public assignedSlot: Node = null;
+
+    start() {
+
+        if (this.pistolWeapon) this.pistolWeapon.active = false;
+        if (this.akWeapon) this.akWeapon.active = false;
+
+        GameManager.Instance.registerUnit(this);
+
+    }
 
     update(dt: number) {
-        // Tự động tìm vị trí trong hàng đợi
-        if (this.state === 'walking_in' || this.state === 'waiting') {
-            this.updateQueuePosition();
+
+        if (this.state == "attacking") {
+            this.updateAttack(dt);
         }
 
-        // Logic bắn quái
-        if (this.state === 'attacking') {
-            this.attackCooldown -= dt;
-            if (this.attackCooldown <= 0) {
-                let dmg = (this.desiredWeapon === 'AK') ? 8 : 2;
-                BossController.Instance.takeDamage(dmg);
-                this.attackCooldown = (this.desiredWeapon === 'AK') ? 0.16 : 0.5; // Tốc độ bắn
-            }
-        }
     }
 
-    updateQueuePosition() {
-        let queuedUnits = GameManager.Instance.activeUnits.filter(u => 
-            u.state === 'walking_in' || u.state === 'waiting' || u.state === 'being_asked' || u.state === 'waiting_weapon'
-        );
-        let myIndex = queuedUnits.indexOf(this);
-        
-        if (myIndex !== -1 && myIndex < GameManager.Instance.queuePositions.length) {
-            let targetPos = GameManager.Instance.queuePositions[myIndex].position;
-            // Dùng lerp để di chuyển mượt mà về vị trí xếp hàng
-            Vec3.lerp(this.node.position, this.node.position, targetPos, 0.1);
-            this.node.setPosition(this.node.position);
-            
-            if (Vec3.distance(this.node.position, targetPos) < 1.0 && this.state === 'walking_in') {
-                this.state = 'waiting';
-            }
+    //---------------------------------------
+    // Queue: chỉ gọi bởi GameManager.refreshQueue(), chỉ khi state là walking/queue.
+    // NPC luôn nhìn về Staff trong lúc đứng/di chuyển trong hàng.
+
+    refreshQueue(index: number) {
+
+        this.queueIndex = index;
+
+        const positions = GameManager.Instance.queuePositions;
+
+        if (index >= positions.length)
+            return;
+
+        const staff = GameManager.Instance.staffCounter;
+
+        if (staff) this.lookAtTarget(staff.worldPosition);
+
+        const target = positions[index].worldPosition;
+
+        const dist = Vec3.distance(this.node.worldPosition, target);
+
+        if (dist < 0.05) {
+
+            if (this.state == "walking")
+                this.state = "queue";
+
+            return;
+
         }
+
+        const duration = Math.max(0.15, dist / this.moveSpeed);
+
+        this.moveTo(target, duration, () => {
+
+            if (staff) this.lookAtTarget(staff.worldPosition);
+
+            if (this.state == "walking")
+                this.state = "queue";
+
+        });
+
     }
 
-    receiveWeapon(weaponType: string) {
-        this.state = 'leveling_up';
-        this.desiredWeapon = weaponType;
-        
-        // Cộng tiền cho Player
-        let reward = (weaponType === 'AK') ? 30 : 10;
+    //---------------------------------------
+    // Được Player gọi khi chọn phục vụ NPC này. NPC tự rời queue và tự di chuyển,
+    // Player không đụng vào position/tween của NPC.
+
+    moveToCounter(onArrived?: () => void) {
+
+        this.state = "moveCounter";
+
+        const positions = GameManager.Instance.npcCounterPositions;
+
+        const npcCounter =
+            (this.queueIndex >= 0 && this.queueIndex < positions.length)
+                ? positions[this.queueIndex]
+                : null;
+
+        GameManager.Instance.refreshQueue();
+
+        const target =
+            npcCounter ? npcCounter.worldPosition : this.node.worldPosition;
+
+        const dist = Vec3.distance(this.node.worldPosition, target);
+
+        const duration = Math.max(0.2, dist / this.moveSpeed);
+
+        this.moveTo(target, duration, () => {
+
+            this.state = "counterWaiting";
+
+            const staff = GameManager.Instance.staffCounter;
+
+            if (staff) this.lookAtTarget(staff.worldPosition);
+
+            if (onArrived) onArrived();
+
+        });
+
+    }
+
+    //---------------------------------------
+
+    receiveWeapon(type: string) {
+
+        this.desiredWeapon = type;
+
+        this.playAnim("Take");
+
+        if (this.pistolWeapon) this.pistolWeapon.active = (type == "Pistol");
+        if (this.akWeapon) this.akWeapon.active = (type == "AK");
+
+        const reward =
+            type == "AK"
+                ? 30
+                : 10;
+
         GameManager.Instance.addCoin(reward);
 
-        // Chạy VFX thăng cấp ở đây, sau đó gọi hàm moveToAttackSlot
-        this.scheduleOnce(this.moveToAttackSlot, 1.0); // Giả lập chờ 1 giây nâng cấp
+        this.scheduleOnce(() => {
+
+            this.moveAttack();
+
+        }, 0.6);
+
     }
 
-    moveToAttackSlot() {
-        this.state = 'moving_to_attack';
-        
-        // Tìm Slot chưa có người đứng
-        for (let slot of GameManager.Instance.attackSlots) {
-            let slotData = slot.getComponent(SlotData); // Ép kiểu an toàn bằng class SlotData
-            if (slotData && !slotData.isOccupied) {
-                this.assignedSlotNode = slot;
-                slotData.isOccupied = true; // TypeScript sẽ nhận diện được biến này
-                break;
-            }
+    //---------------------------------------
+
+    moveAttack() {
+
+        let targetSlot: Node = null;
+
+        for (const slot of GameManager.Instance.attackSlots) {
+
+            const data =
+                slot.getComponent(SlotData);
+
+            if (!data) continue;
+
+            if (data.occupied) continue;
+
+            data.occupied = true;
+
+            targetSlot = slot;
+
+            break;
+
         }
 
-        if (this.assignedSlotNode) {
-            tween(this.node.position)
-                .to(1.0, this.assignedSlotNode.position)
-                .call(() => { this.state = 'attacking'; })
-                .start();
+        if (!targetSlot) {
+
+            this.state = "counterWaiting";
+
+            this.scheduleOnce(() => {
+
+                this.moveAttack();
+
+            }, 0.5);
+
+            return;
+
         }
+
+        this.assignedSlot = targetSlot;
+
+        this.state = "moveAttack";
+
+        const dist = Vec3.distance(this.node.worldPosition, targetSlot.worldPosition);
+
+        const duration = Math.max(0.3, dist / this.moveSpeed);
+
+        this.moveTo(targetSlot.worldPosition, duration, () => {
+
+            this.state = "attacking";
+
+            if (BossController.Instance)
+                this.lookAtTarget(BossController.Instance.node.worldPosition);
+
+            this.playAnim("Attack_2");
+
+        });
+
     }
 
-    takeDamage(amount: number) {
-        this.hp -= amount;
-        if (this.hp <= 0) {
-            this.die();
-        }
+    //---------------------------------------
+
+    updateAttack(dt: number) {
+
+        this.attackTimer -= dt;
+
+        if (this.attackTimer > 0)
+            return;
+
+        const dmg =
+            this.desiredWeapon == "AK"
+                ? 8
+                : 2;
+
+        BossController.Instance.takeDamage(dmg);
+
+        this.attackTimer =
+            this.desiredWeapon == "AK"
+                ? 0.16
+                : 0.5;
+
     }
+
+    //---------------------------------------
+
+    takeDamage(dmg: number) {
+
+        if (this.state == "dead")
+            return;
+
+        this.hp -= dmg;
+
+        if (this.hp > 0)
+            return;
+
+        this.die();
+
+    }
+
+    //---------------------------------------
 
     die() {
-        // Xóa khỏi danh sách quản lý
-        let index = GameManager.Instance.activeUnits.indexOf(this);
-        if (index !== -1) GameManager.Instance.activeUnits.splice(index, 1);
-        
-        // Giải phóng Slot
-        if (this.assignedSlotNode) {
-            let slotData = this.assignedSlotNode.getComponent(SlotData);
-            if (slotData) {
-                slotData.isOccupied = false;
-            }
+
+        this.state = "dead";
+
+        this.playAnim("Death");
+
+        if (this.assignedSlot) {
+
+            const slot =
+                this.assignedSlot.getComponent(SlotData);
+
+            if (slot)
+                slot.occupied = false;
+
         }
 
+        GameManager.Instance.removeUnit(this);
+
         BossController.Instance.healOnKill();
-        this.node.destroy();
+
+        GameManager.Instance.trySpawnNPC();
+
+        this.scheduleOnce(() => {
+
+            this.node.destroy();
+
+        }, 0.6);
+
     }
+
 }

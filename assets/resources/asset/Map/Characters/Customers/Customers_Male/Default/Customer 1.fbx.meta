@@ -850,6 +850,21 @@
           {}
         ]
       }
+    },
+    "meshOptimize": {
+      "enable": true,
+      "vertexCache": true,
+      "vertexFetch": true,
+      "overdraw": true
+    },
+    "meshSimplify": {
+      "enable": true,
+      "targetRatio": 0.67
+    },
+    "meshCompress": {
+      "enable": true,
+      "compress": true,
+      "encode": true
     }
   }
 }

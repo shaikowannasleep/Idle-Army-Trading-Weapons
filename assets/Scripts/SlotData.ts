@@ -1,7 +1,10 @@
 import { _decorator, Component } from 'cc';
-const { ccclass, property } = _decorator;
+
+const { ccclass } = _decorator;
 
 @ccclass('SlotData')
 export class SlotData extends Component {
-    public isOccupied: boolean = false;
+
+    public occupied = false;
+
 }

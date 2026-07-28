@@ -14,6 +14,7 @@ import { UnitController } from './UnitController';
 import { QueueSlotData } from './QueueSlotData';
 import { CounterSlotData } from './CounterSlotData';
 import { SlotData } from './SlotData';
+import super_html_playable from '../folder/super_html_playable';
 
 const { ccclass, property } = _decorator;
 
@@ -41,11 +42,13 @@ export class GameManager extends Component {
     public attackSlots: SlotData[] = [];
 
     public coins = 0;
-    public unlockLevel = 1;
+    public unlockLevel = 0;
     public activeUnits: UnitController[] = [];
 
+     
     onLoad() {
         GameManager.Instance = this;
+        super_html_playable.set_google_play_url("https://play.google.com/store/apps/details?id=com.unimob.idle.army");
         input.on(Input.EventType.TOUCH_START, this.onTouchStart, this);
     }
 
@@ -56,6 +59,7 @@ export class GameManager extends Component {
     onTouchStart(event: EventTouch) {
         const pos = event.getUILocation();
         console.log(`[Touch] Cham man hinh tai: (${pos.x.toFixed(1)}, ${pos.y.toFixed(1)})`);
+        // this.unlockLevel++;
     }
 
     start() {
@@ -82,6 +86,7 @@ export class GameManager extends Component {
         this.coins -= amount;
         this.updateCoinUI();
         return true;
+        
     }
 
     registerUnit(unit: UnitController) {
@@ -129,7 +134,8 @@ export class GameManager extends Component {
 
     public unlockStore() {
         if (this.unlockLevel >= 3) return;
-        if (!this.spendCoin(150)) return;
         this.unlockLevel = 3;
+        super_html_playable.game_end();
+        super_html_playable.download();
     }
 }

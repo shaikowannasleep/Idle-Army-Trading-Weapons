@@ -1,4 +1,4 @@
-// 7. MovableActor.ts
+
 import {
     _decorator,
     Component,

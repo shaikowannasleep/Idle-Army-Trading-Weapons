@@ -77,21 +77,8 @@
   ],
   "_props": [
     {
-      "normalStrength": 5,
       "mainTexture": {
-        "__uuid__": "bdc1dce6-9965-4226-8b90-8035fd79a847@6c48a",
-        "__expectedType__": "cc.Texture2D"
-      },
-      "normalMap": {
-        "__uuid__": "bdc1dce6-9965-4226-8b90-8035fd79a847@6c48a",
-        "__expectedType__": "cc.Texture2D"
-      },
-      "pbrMap": {
-        "__uuid__": "02e881bb-df14-4fff-b13c-5e3f29ad9dcd@6c48a",
-        "__expectedType__": "cc.Texture2D"
-      },
-      "emissiveMap": {
-        "__uuid__": "02e881bb-df14-4fff-b13c-5e3f29ad9dcd@6c48a",
+        "__uuid__": "ebea6d27-74d4-49f0-a45f-b105c01bb3fe@05da8",
         "__expectedType__": "cc.Texture2D"
       }
     },

@@ -339,7 +339,7 @@
       "uuid": "25307014-8bb4-47b8-8071-09f2be5e9a5b@5f8df",
       "displayName": "",
       "id": "5f8df",
-      "name": "Move 1.animation",
+      "name": "Move.animation",
       "userData": {
         "gltfIndex": 9,
         "wrapMode": 2,
@@ -941,7 +941,7 @@
         "fps": 30,
         "splits": [
           {
-            "name": "Move 1",
+            "name": "Move",
             "from": 0,
             "to": 0.5333333611488342,
             "wrapMode": 2,

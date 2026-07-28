@@ -2,7 +2,7 @@
   "ver": "1.0.27",
   "importer": "image",
   "imported": true,
-  "uuid": "f8560f82-90f0-4944-95cf-555c9b42f10c",
+  "uuid": "3b7a8795-fd15-49cd-a7b5-1493e1b583a4",
   "files": [
     ".json",
     ".png"
@@ -10,8 +10,8 @@
   "subMetas": {
     "6c48a": {
       "importer": "texture",
-      "uuid": "f8560f82-90f0-4944-95cf-555c9b42f10c@6c48a",
-      "displayName": "Hop mo khoa nhan vien",
+      "uuid": "3b7a8795-fd15-49cd-a7b5-1493e1b583a4@6c48a",
+      "displayName": "base3",
       "id": "6c48a",
       "name": "texture",
       "userData": {
@@ -22,7 +22,7 @@
         "mipfilter": "none",
         "anisotropy": 0,
         "isUuid": true,
-        "imageUuidOrDatabaseUri": "f8560f82-90f0-4944-95cf-555c9b42f10c",
+        "imageUuidOrDatabaseUri": "3b7a8795-fd15-49cd-a7b5-1493e1b583a4",
         "visible": false
       },
       "ver": "1.0.22",
@@ -36,7 +36,7 @@
   "userData": {
     "type": "texture",
     "fixAlphaTransparencyArtifacts": false,
-    "hasAlpha": false,
-    "redirect": "f8560f82-90f0-4944-95cf-555c9b42f10c@6c48a"
+    "hasAlpha": true,
+    "redirect": "3b7a8795-fd15-49cd-a7b5-1493e1b583a4@6c48a"
   }
 }

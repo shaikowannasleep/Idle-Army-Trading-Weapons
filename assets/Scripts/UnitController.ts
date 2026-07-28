@@ -46,9 +46,9 @@ export class UnitController extends MovableActor {
             const duration = Math.max(0.15, dist / this.moveSpeed);
 
             this.moveTo(target, duration, () => {
-                //  this.lookAtTarget(target);
                 this.state = "queue";
             });
+            // this.lookAtTarget(target);
         }
     }
 
@@ -65,7 +65,7 @@ export class UnitController extends MovableActor {
             this.counterSlot = GameManager.Instance.counterSlots.find(c => c.slotID === this.queueSlot!.slotID) || null;
         }
 
-       
+
         const target = this.counterSlot ? this.counterSlot.npcPos.worldPosition : this.node.worldPosition;
         const dist = Vec3.distance(this.node.worldPosition, target);
         const duration = Math.max(0.2, dist / this.moveSpeed);
@@ -78,7 +78,6 @@ export class UnitController extends MovableActor {
 
     receiveWeapon(type: string) {
         this.desiredWeapon = type;
-        this.playAnim("Take");
 
         if (this.pistolWeapon) this.pistolWeapon.active = (type == "Pistol");
         if (this.akWeapon) this.akWeapon.active = (type == "AK");
@@ -103,9 +102,9 @@ export class UnitController extends MovableActor {
         }
 
         if (!targetSlot) {
-            // Chưa có chỗ tấn công trống -> NPC vẫn còn đứng ở quầy,
-            // KHÔNG được giải phóng slot kẻo spawner đưa NPC mới đè lên.
+
             this.state = "counterWaiting";
+            this.playAnim("Idle");
             this.scheduleOnce(() => {
                 this.moveAttack();
             }, 0.5);
@@ -124,7 +123,7 @@ export class UnitController extends MovableActor {
         const dist = Vec3.distance(this.node.worldPosition, targetSlot.node.worldPosition);
         const duration = Math.max(0.3, dist / this.moveSpeed);
         if (BossController.Instance)
-                this.lookAtTarget(BossController.Instance.node.worldPosition);
+            this.lookAtTarget(BossController.Instance.node.worldPosition);
         this.moveTo(targetSlot.node.worldPosition, duration, () => {
             this.state = "attacking";
             this.playAnim("Attack_2");
@@ -148,7 +147,7 @@ export class UnitController extends MovableActor {
 
     die() {
         this.state = "dead";
-        this.playAnim("Death");
+        // this.playAnim("Death");
 
         if (this.assignedSlot) {
             this.assignedSlot.occupied = false;

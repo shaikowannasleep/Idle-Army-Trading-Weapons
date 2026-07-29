@@ -11,6 +11,9 @@ const ATTACK_CLIPS = [
     'Boss 1_Attack 4'
 ];
 
+const COMBO_CHANCE = 0.3;
+const COMBO_DAMAGE_MULT = 2;
+
 @ccclass('BossController')
 export class BossController extends Component {
     public static Instance: BossController;
@@ -22,7 +25,7 @@ export class BossController extends Component {
 
     private state: string = 'spawning';
     private attackCooldown: number = 1.0;
-    private hitReactCooldown: number = 0;
+    private hitCount: number = 0;
 
     private currentAnim: string = "";
 
@@ -61,20 +64,17 @@ export class BossController extends Component {
     }
 
     // Play boss animation clip
-    playAnim(name: string) {
+    playAnim(name: string, force: boolean = false, blend: number = 0.15) {
         if (!this.anim) return;
-        if (this.currentAnim == name) return;
+        if (this.currentAnim == name && !force) return;
 
         this.currentAnim = name;
-        this.anim.crossFade(name, 0.15);
+        this.anim.crossFade(name, blend);
     }
 
     update(dt: number) {
         if (this.state == 'spawning' || this.state == 'dead')
             return;
-
-        if (this.hitReactCooldown > 0)
-            this.hitReactCooldown -= dt;
 
         if (this.state === 'stunned') {
             this.hp += 500 * dt;
@@ -102,8 +102,13 @@ export class BossController extends Component {
             let validTargets = this.getTargetsInRange();
 
             if (validTargets.length > 0) {
-                this.doAttack(validTargets);
-                this.attackCooldown = 1.0;
+                if (Math.random() < COMBO_CHANCE) {
+                    this.doComboAttack(validTargets);
+                    this.attackCooldown = 3.0;
+                } else {
+                    this.doAttack(validTargets);
+                    this.attackCooldown = 1.0;
+                }
             }
         }
     }
@@ -150,6 +155,34 @@ export class BossController extends Component {
         }, 0.8);
     }
 
+    // Jump back, then a heavy combo hit
+    doComboAttack(targets: any[]) {
+        this.state = 'attacking';
+
+        this.playAnim('Boss 1_Jump back');
+        const jumpBackDuration = this.anim?.getState('Boss 1_Jump back')?.duration ?? 0.4;
+
+        this.scheduleOnce(() => {
+            if (this.state != 'attacking') return;
+
+            this.playAnim('Boss 1_Combo');
+
+            if (targets.length > 0) {
+                let randomTarget = targets[Math.floor(Math.random() * targets.length)];
+                randomTarget.takeDamage(this.currentDamage * COMBO_DAMAGE_MULT);
+            }
+
+            const comboDuration = this.anim?.getState('Boss 1_Combo')?.duration ?? 1.0;
+
+            this.scheduleOnce(() => {
+                if (this.state == 'attacking') {
+                    this.state = 'idle';
+                    this.playAnim('Boss 1_Idle');
+                }
+            }, comboDuration);
+        }, jumpBackDuration);
+    }
+
     // Apply damage, handle stun/enrage/death
     takeDamage(amount: number) {
         if (this.state === 'stunned' || this.state === 'spawning' || this.state === 'dead')
@@ -178,14 +211,18 @@ export class BossController extends Component {
             return;
         }
 
-        if (this.state == 'idle' && this.hitReactCooldown <= 0) {
-            this.hitReactCooldown = 0.4;
-            this.playAnim('Boss 1_Bi tan cong');
+        if (this.state != 'idle') return;
 
-            this.scheduleOnce(() => {
-                if (this.state == 'idle')
-                    this.playAnim('Boss 1_Idle');
-            }, 0.3);
+        this.playAnim('Boss 1_Bi tan cong', true, 0.02);
+        this.hitCount++;
+
+        if (this.hitCount >= 5) {
+            this.hitCount = 0;
+            const targets = this.getTargetsInRange();
+            if (targets.length > 0) {
+                this.doComboAttack(targets);
+                this.attackCooldown = 3.0;
+            }
         }
     }
 

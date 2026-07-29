@@ -4,7 +4,9 @@
   "general": {
     "designResolution": {
       "fitWidth": true,
-      "fitHeight": true
+      "fitHeight": true,
+      "width": 1080,
+      "height": 1920
     },
     "downloadMaxConcurrency": 15.9
   }

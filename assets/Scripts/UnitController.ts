@@ -1,6 +1,7 @@
 import {
     _decorator,
     Node,
+    tween,
     Vec3
 } from 'cc';
 
@@ -47,8 +48,15 @@ export class UnitController extends MovableActor {
 
             this.moveTo(target, duration, () => {
                 this.state = "queue";
+                tween(this.node)
+    .to(0.3, {
+        eulerAngles: new Vec3(this.node.eulerAngles.x, 0, this.node.eulerAngles.z)
+    })
+    .start();
+                   
+    
             });
-            // this.lookAtTarget(target);
+           
         }
     }
 
@@ -72,8 +80,13 @@ export class UnitController extends MovableActor {
 
         this.moveTo(target, duration, () => {
             this.state = "counterWaiting";
-            if (onArrived) onArrived();
+            
+            if (onArrived) 
+                {onArrived();
+                  
+                }
         });
+         
     }
 
     receiveWeapon(type: string) {

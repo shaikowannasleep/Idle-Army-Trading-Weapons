@@ -32,6 +32,17 @@ export class GameManager extends Component {
     @property(Node)
     spawnPoint: Node = null!;
 
+      @property(Node)
+    boxPistol: Node = null!;
+       @property(Node)
+    itemPistol: Node = null!;
+
+        @property(Node)
+    boxAK: Node = null!;
+       @property(Node)
+    itemAK: Node = null!;
+
+
     @property([QueueSlotData])
     public queueSlots: QueueSlotData[] = [];
 
@@ -45,21 +56,34 @@ export class GameManager extends Component {
     public unlockLevel = 0;
     public activeUnits: UnitController[] = [];
 
+    
      
     onLoad() {
         GameManager.Instance = this;
         super_html_playable.set_google_play_url("https://play.google.com/store/apps/details?id=com.unimob.idle.army");
         input.on(Input.EventType.TOUCH_START, this.onTouchStart, this);
+         input.on(Input.EventType.TOUCH_END, this.onTouchEnd, this);
     }
 
     onDestroy() {
         input.off(Input.EventType.TOUCH_START, this.onTouchStart, this);
+        input.off(Input.EventType.TOUCH_END, this.onTouchEnd, this);
     }
 
     onTouchStart(event: EventTouch) {
         const pos = event.getUILocation();
         console.log(`[Touch] Cham man hinh tai: (${pos.x.toFixed(1)}, ${pos.y.toFixed(1)})`);
-        // this.unlockLevel++;
+        
+    
+    }
+    onTouchEnd(event: EventTouch) { 
+        if (this.unlockLevel < 1) {
+            this.unlockLevel = 1;
+            this.boxPistol.active = false;
+            this.itemPistol.active = true;
+            return;
+        }
+        
     }
 
     start() {

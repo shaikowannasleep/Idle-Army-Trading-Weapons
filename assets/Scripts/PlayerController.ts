@@ -80,7 +80,7 @@ export class PlayerController extends MovableActor {
 
                 this.askCustomer();
 
-            }, 1);
+            }, 0.5);
 
         }
    
@@ -101,7 +101,7 @@ export class PlayerController extends MovableActor {
 
                         this.askCustomer();
 
-                    }, 1);
+                    }, 0.5);
 
                 }
             );
@@ -151,11 +151,11 @@ export class PlayerController extends MovableActor {
          if (this.target) {
                 this.lookAtTarget(this.target.node.worldPosition);
                         }
-        this.moveTo(targetPos, 1, () => {
+        this.moveTo(targetPos,0.75, () => {
            
             this.scheduleOnce(() => {
                 this.deliver();
-            }, 0.5);
+            }, 0.2);
         });
     }
 

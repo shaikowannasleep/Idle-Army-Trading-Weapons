@@ -11,12 +11,19 @@ import { SlotData } from './SlotData';
 import { MovableActor } from './MovableActor';
 import { QueueSlotData } from './QueueSlotData';
 import { CounterSlotData } from './CounterSlotData';
+import { SoundManager } from './SoundManager';
 
 const { ccclass, property } = _decorator;
 
 export enum UnitState {
     WALKING, QUEUE, MOVE_COUNTER, COUNTER_WAITING, MOVE_ATTACK, ATTACK, DEAD
 }
+
+const PISTOL_DAMAGE = 50;
+const PISTOL_FIRE_RATE = 1.0;
+
+const AK_DAMAGE = 100;
+const AK_FIRE_RATE = 0.15;
 
 @ccclass('UnitController')
 export class UnitController extends MovableActor {
@@ -97,6 +104,7 @@ export class UnitController extends MovableActor {
 
         const reward = type == "AK" ? 30 : 10;
         GameManager.Instance.addCoin(reward);
+        SoundManager.Instance?.playFinishOrder();
 
         this.scheduleOnce(() => {
             this.moveAttack();
@@ -124,7 +132,6 @@ export class UnitController extends MovableActor {
             return;
         }
 
-        // NPC chính thức rời khỏi điểm đứng (queue/counter) lúc này -> giải phóng slot.
         if (this.queueSlot && this.queueSlot.npc === this) {
             this.queueSlot.npc = null;
         }
@@ -146,9 +153,13 @@ export class UnitController extends MovableActor {
     updateAttack(dt: number) {
         this.attackTimer -= dt;
         if (this.attackTimer > 0) return;
-        const dmg = this.desiredWeapon == "AK" ? 100 : 50;
+
+        const isAK = this.desiredWeapon == "AK";
+        const dmg = isAK ? AK_DAMAGE : PISTOL_DAMAGE;
+
         BossController.Instance.takeDamage(dmg);
-        this.attackTimer = this.desiredWeapon == "AK" ? 0.16 : 0.5;
+        SoundManager.Instance?.playGunshot();
+        this.attackTimer = isAK ? AK_FIRE_RATE : PISTOL_FIRE_RATE;
     }
 
     takeDamage(dmg: number) {
@@ -160,14 +171,11 @@ export class UnitController extends MovableActor {
 
     die() {
         this.state = "dead";
-        // this.playAnim("Death");
-
+        SoundManager.Instance?.playDeath();
         if (this.assignedSlot) {
             this.assignedSlot.occupied = false;
         }
 
-        // Safety net: nếu NPC chết trong lúc vẫn còn giữ slot (trường hợp bất thường),
-        // vẫn phải giải phóng để tránh kẹt slot vĩnh viễn.
         if (this.queueSlot && this.queueSlot.npc === this) {
             this.queueSlot.npc = null;
         }

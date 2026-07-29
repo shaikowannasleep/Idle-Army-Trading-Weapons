@@ -15,6 +15,7 @@ import { QueueSlotData } from './QueueSlotData';
 import { CounterSlotData } from './CounterSlotData';
 import { SlotData } from './SlotData';
 import super_html_playable from '../folder/super_html_playable';
+import { SoundManager } from './SoundManager';
 
 const { ccclass, property } = _decorator;
 
@@ -76,14 +77,16 @@ export class GameManager extends Component {
         
     
     }
-    onTouchEnd(event: EventTouch) { 
+    onTouchEnd(event: EventTouch) {
         if (this.unlockLevel < 1) {
             this.unlockLevel = 1;
             this.boxPistol.active = false;
             this.itemPistol.active = true;
+            SoundManager.Instance?.playBGM();   
+            SoundManager.Instance?.playClick();
             return;
         }
-        
+
     }
 
     start() {
@@ -103,14 +106,16 @@ export class GameManager extends Component {
     addCoin(amount: number) {
         this.coins += amount;
         this.updateCoinUI();
+        SoundManager.Instance?.playCoinReceive();
     }
 
     spendCoin(amount: number): boolean {
         if (this.coins < amount) return false;
         this.coins -= amount;
         this.updateCoinUI();
+        SoundManager.Instance?.playCoinSpend();
         return true;
-        
+
     }
 
     registerUnit(unit: UnitController) {
@@ -154,11 +159,13 @@ export class GameManager extends Component {
         if (this.unlockLevel >= 2) return;
         if (!this.spendCoin(50)) return;
         this.unlockLevel = 2;
+        SoundManager.Instance?.playCoinTip();
     }
 
     public unlockStore() {
         if (this.unlockLevel >= 3) return;
         this.unlockLevel = 3;
+        SoundManager.Instance?.playCoinTip();
         super_html_playable.game_end();
         super_html_playable.download();
     }

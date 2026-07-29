@@ -20,17 +20,17 @@ export enum UnitState {
 }
 
 const PISTOL_DAMAGE = 50;
-const PISTOL_FIRE_RATE = 1.0;
+const PISTOL_FIRE_RATE = 1.8;
 
 const AK_DAMAGE = 100;
-const AK_FIRE_RATE = 0.15;
+const AK_FIRE_RATE = 1.0;
 
 @ccclass('UnitController')
 export class UnitController extends MovableActor {
 
     public state: string = "walking";
     public desiredWeapon = "Pistol";
-    public hp = 60;
+    public hp = 200;
 
     @property(Node) pistolWeapon: Node = null!;
     @property(Node) akWeapon: Node = null!;

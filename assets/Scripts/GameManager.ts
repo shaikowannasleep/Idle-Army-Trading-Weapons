@@ -43,6 +43,9 @@ export class GameManager extends Component {
        @property(Node)
     itemAK: Node = null!;
 
+       @property(Node)
+    boxTool: Node = null!;
+
 
     @property([QueueSlotData])
     public queueSlots: QueueSlotData[] = [];
@@ -57,12 +60,10 @@ export class GameManager extends Component {
     public unlockLevel = 0;
     public activeUnits: UnitController[] = [];
 
-    
      
     onLoad() {
         GameManager.Instance = this;
-        super_html_playable.set_google_play_url("https://play.google.com/store/apps/details?id=com.unimob.idle.army");
-        input.on(Input.EventType.TOUCH_START, this.onTouchStart, this);
+      input.on(Input.EventType.TOUCH_START, this.onTouchStart, this);
          input.on(Input.EventType.TOUCH_END, this.onTouchEnd, this);
     }
 
@@ -73,22 +74,44 @@ export class GameManager extends Component {
 
     onTouchStart(event: EventTouch) {
         const pos = event.getUILocation();
-        console.log(`[Touch] Cham man hinh tai: (${pos.x.toFixed(1)}, ${pos.y.toFixed(1)})`);
-        
-    
+      
     }
     onTouchEnd(event: EventTouch) {
         if (this.unlockLevel < 1) {
             this.unlockLevel = 1;
             this.boxPistol.active = false;
             this.itemPistol.active = true;
-            SoundManager.Instance?.playBGM();   
+            SoundManager.Instance?.playBGM();
             SoundManager.Instance?.playClick();
             return;
         }
 
+        if (this.unlockLevel == 1 && this.boxAK && this.boxAK.active) {
+            this.unlockAK();
+            return;
+        }
+
+        if (this.unlockLevel == 2 && this.coins >= 100) {
+            this.unlockStore();
+            return;
+        }
+
+        if (this.unlockLevel == 3 && this.boxTool && this.boxTool.active) {
+            this.openBoxTool();
+            return;
+        }
+
+        if (this.unlockLevel >= 3) {
+            SoundManager.Instance?.playClick();
+            super_html_playable.download();
+            return;
+        }
     }
 
+    gostore() {
+       SoundManager.Instance?.playClick();
+       super_html_playable.download();
+           }
     start() {
         this.updateCoinUI();
         for (let i = 0; i < 4; i++) {
@@ -107,6 +130,14 @@ export class GameManager extends Component {
         this.coins += amount;
         this.updateCoinUI();
         SoundManager.Instance?.playCoinReceive();
+        this.checkUnlockConditions();
+    }
+
+    
+    checkUnlockConditions() {
+        if (this.unlockLevel == 1 && this.coins >= 50 && this.boxAK && !this.boxAK.active) {
+            this.boxAK.active = true;
+        }
     }
 
     spendCoin(amount: number): boolean {
@@ -159,6 +190,8 @@ export class GameManager extends Component {
         if (this.unlockLevel >= 2) return;
         if (!this.spendCoin(50)) return;
         this.unlockLevel = 2;
+        if (this.boxAK) this.boxAK.active = false;
+        if (this.itemAK) this.itemAK.active = true;
         SoundManager.Instance?.playCoinTip();
     }
 
@@ -168,5 +201,14 @@ export class GameManager extends Component {
         SoundManager.Instance?.playCoinTip();
         super_html_playable.game_end();
         super_html_playable.download();
+        if (this.boxTool) this.boxTool.active = true;
+    }
+
+    // Open the level-3 tool box, granting a coin reward
+    public openBoxTool() {
+        if (!this.boxTool || !this.boxTool.active) return;
+        this.boxTool.active = false;
+        this.addCoin(100);
+        SoundManager.Instance?.playClick();
     }
 }

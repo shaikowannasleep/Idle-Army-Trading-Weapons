@@ -935,7 +935,7 @@
       }
     },
     "meshOptimize": {
-      "enable": true,
+      "enable": false,
       "vertexCache": true,
       "vertexFetch": true,
       "overdraw": true
@@ -945,7 +945,7 @@
       "targetRatio": 0.67
     },
     "meshCompress": {
-      "enable": true,
+      "enable": false,
       "compress": true,
       "encode": true
     }

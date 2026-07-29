@@ -1,6 +1,7 @@
 import {
     _decorator,
-    Node
+    Node,
+    Vec3
 } from 'cc';
 
 import { GameManager } from './GameManager';
@@ -19,6 +20,9 @@ export class PlayerController extends MovableActor {
     @property(Node)
     akRack: Node = null!;
 
+    @property(Node)
+    posInteract: Node = null!;
+
     private target: UnitController | null = null;
     private activeCounter: CounterSlotData | null = null;
 
@@ -26,46 +30,91 @@ export class PlayerController extends MovableActor {
     private busy = false;
     private lastServedIndex = -1;
 
+    start() {
+        this.playAnim("Idle");
+    }
     update() {
         if (this.busy) return;
+        if (GameManager.Instance.unlockLevel < 1) return;
         this.findCustomer();
     }
 
+    private isAtInteractPos(): boolean {
+
+    return Vec3.distance(
+        this.node.worldPosition,
+        this.posInteract.worldPosition
+    ) < 0.05;
+
+}
     findCustomer() {
-        const slots = GameManager.Instance.queueSlots;
 
-        for (let offset = 1; offset <= slots.length; offset++) {
-            const i = (this.lastServedIndex + offset) % slots.length;
-            const slot = slots[i];
+    const slots = GameManager.Instance.queueSlots;
 
-            if (slot.npc && slot.npc.state == "queue") {
-                this.lastServedIndex = i;
-                this.target = slot.npc;
-                this.busy = true;
+    for (let offset = 1; offset <= slots.length; offset++) {
 
-                this.activeCounter = GameManager.Instance.counterSlots.find(c => c.slotID === slot.slotID) || null;
+        const i = (this.lastServedIndex + offset) % slots.length;
 
-                this.target.moveToCounter(() => {
-                    this.moveToCounter(() => {
-                        this.lookAtTarget(this.target!.node.worldPosition);
-                        this.target!.lookAtTarget(this.node.worldPosition);
+        const slot = slots[i];
 
-                        this.scheduleOnce(() => {
-                            this.askCustomer();
-                        }, 0.3);
-                    });
-                });
-                break;
-            }
+        if (!slot.npc || slot.npc.state != "queue")
+            continue;
+
+        this.lastServedIndex = i;
+        this.target = slot.npc;
+        this.busy = true;
+
+        this.activeCounter =
+            GameManager.Instance.counterSlots.find(
+                c => c.slotID === slot.slotID
+            ) || null;
+
+            
+        if (this.isAtInteractPos()) {
+
+            this.lookAtTarget(this.target.node.worldPosition);
+
+            this.target.lookAtTarget(this.node.worldPosition);
+
+            this.scheduleOnce(() => {
+
+                this.askCustomer();
+
+            }, 1);
+
         }
+   
+        else {
+
+            this.lookAtTarget(this.posInteract.worldPosition);
+
+            this.moveTo(
+                this.posInteract.worldPosition,
+                1,
+                () => {
+
+                    this.lookAtTarget(this.target!.node.worldPosition);
+
+                    this.target!.lookAtTarget(this.node.worldPosition);
+
+                    this.scheduleOnce(() => {
+
+                        this.askCustomer();
+
+                    }, 1);
+
+                }
+            );
+
+        }
+
+        break;
+
     }
 
-    moveToCounter(callback: () => void) {
-        const targetPos = this.activeCounter ? this.activeCounter.staffPos.worldPosition : this.node.worldPosition;
-        this.moveTo(targetPos, 0.45, () => {
-            if (callback) callback();
-        });
-    }
+}
+
+   
 
     askCustomer() {
         if (!this.target) {
@@ -83,9 +132,9 @@ export class PlayerController extends MovableActor {
 
     moveToRack() {
         const rack = this.target!.desiredWeapon == "AK" ? this.akRack : this.pistolRack;
-        
-        this.moveTo(rack.worldPosition, 0.45, () => {
-            this.playAnim("Craft");
+         this.lookAtTarget(rack.worldPosition);   
+        this.moveTo(rack.worldPosition, 1, () => {
+        this.playAnim("Manufacture");
             this.scheduleOnce(() => {
                 this.finishCraft();
             }, 1.2);
@@ -98,16 +147,15 @@ export class PlayerController extends MovableActor {
     }
 
     moveDeliver() {
-        const targetPos = this.activeCounter ? this.activeCounter.staffPos.worldPosition : this.node.worldPosition;
-        
-        this.moveTo(targetPos, 0.45, () => {
-            if (this.target) {
+               const targetPos = this.posInteract.worldPosition;
+         if (this.target) {
                 this.lookAtTarget(this.target.node.worldPosition);
-                this.target.lookAtTarget(this.node.worldPosition);
-            }
+                        }
+        this.moveTo(targetPos, 1, () => {
+           
             this.scheduleOnce(() => {
                 this.deliver();
-            }, 0.25);
+            }, 0.5);
         });
     }
 
@@ -116,9 +164,12 @@ export class PlayerController extends MovableActor {
             this.resetWorker();
             return;
         }
-
-        this.target.receiveWeapon(this.holdingWeapon);
+        this.playAnim("Manufacture");
+        this.scheduleOnce(() => {
+               this.target.receiveWeapon(this.holdingWeapon);
         this.resetWorker();
+            }, 1);
+        
     }
 
     resetWorker() {

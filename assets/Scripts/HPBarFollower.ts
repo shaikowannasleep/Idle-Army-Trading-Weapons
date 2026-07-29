@@ -14,29 +14,13 @@ export class WorldHPBar extends Component {
 
     start() {
         this.progressBar = this.getComponent(ProgressBar)!;
-               this.mainCamera.convertToUINode(
-            this.targetPoint.worldPosition, // Tọa độ 3D gốc
-            this.node.parent,               // Node cha chứa thanh máu (để lấy hệ trục local)
-            this._uiPos                     // Lưu kết quả vào biến _uiPos
-        );
+             
         
-        // Gán tọa độ 2D vừa quy đổi cho thanh máu
-        this.node.setPosition(this._uiPos);
     }
 
     update(dt: number) {
         // Nếu thiếu Camera, thiếu Cục Cube, hoặc thanh máu không nằm trong UI, thì dừng lại
-        if (!this.mainCamera || !this.targetPoint || !this.node.parent) return;
-
-        
-        this.mainCamera.convertToUINode(
-            this.targetPoint.worldPosition, // Tọa độ 3D gốc
-            this.node.parent,               // Node cha chứa thanh máu (để lấy hệ trục local)
-            this._uiPos                     // Lưu kết quả vào biến _uiPos
-        );
-
-        // Gán tọa độ 2D vừa quy đổi cho thanh máu
-        this.node.setPosition(this._uiPos);
+       
     }
 
     // Hàm gọi để update máu (từ BossController)

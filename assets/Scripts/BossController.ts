@@ -57,7 +57,8 @@ export class BossController extends Component {
             this.playAnim('Boss 1_Idle');
         }, this);
 
-        if (this.hpBarUI) this.hpBarUI.updateHP(this.hp, this.maxHp);
+        if (this.hpBarUI) 
+            this.hpBarUI.updateHP(this.hp, this.maxHp);
     }
 
     //---------------------------------------

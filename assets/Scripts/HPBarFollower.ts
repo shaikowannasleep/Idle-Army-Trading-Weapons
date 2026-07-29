@@ -3,27 +3,24 @@ const { ccclass, property } = _decorator;
 
 @ccclass('WorldHPBar')
 export class WorldHPBar extends Component {
-    @property(Node) 
-    targetPoint: Node = null!; // Kéo thả cục Cube trắng (HpPoint) vào đây
+    @property(Node)
+    targetPoint: Node = null!;
 
-    @property(Camera) 
-    mainCamera: Camera = null!; 
+    @property(Camera)
+    mainCamera: Camera = null!;
 
     private progressBar: ProgressBar = null!;
-    private _uiPos: Vec3 = new Vec3(); // Biến tạm để lưu tọa độ 2D, tránh rác bộ nhớ
+    private _uiPos: Vec3 = new Vec3();
 
     start() {
         this.progressBar = this.getComponent(ProgressBar)!;
-             
-        
     }
 
     update(dt: number) {
-        // Nếu thiếu Camera, thiếu Cục Cube, hoặc thanh máu không nằm trong UI, thì dừng lại
-       
+
     }
 
-    // Hàm gọi để update máu (từ BossController)
+    // Update the HP bar fill amount
     public updateHP(currentHP: number, maxHP: number) {
         if (this.progressBar) {
             this.progressBar.progress = Math.max(0, currentHP / maxHP);

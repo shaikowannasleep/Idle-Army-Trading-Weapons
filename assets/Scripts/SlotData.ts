@@ -1,4 +1,3 @@
-// 3. SlotData.ts (Attack Slots)
 import { _decorator, Component } from 'cc';
 const { ccclass } = _decorator;
 

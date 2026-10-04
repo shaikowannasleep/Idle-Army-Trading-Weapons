@@ -2,7 +2,8 @@ import {
     _decorator,
     Node,
     tween,
-    Vec3
+    Vec3,
+    find
 } from 'cc';
 
 import { GameManager } from './GameManager';
@@ -15,15 +16,11 @@ import { SoundManager } from './SoundManager';
 
 const { ccclass, property } = _decorator;
 
-export enum UnitState {
-    WALKING, QUEUE, MOVE_COUNTER, COUNTER_WAITING, MOVE_ATTACK, ATTACK, DEAD
-}
-
 const PISTOL_DAMAGE = 50;
-const PISTOL_FIRE_RATE = 1.8;
+const PISTOL_FIRE_RATE = 1.6;
 
 const AK_DAMAGE = 100;
-const AK_FIRE_RATE = 1.0;
+const AK_FIRE_RATE = 0.9;
 
 @ccclass('UnitController')
 export class UnitController extends MovableActor {
@@ -32,9 +29,12 @@ export class UnitController extends MovableActor {
     public desiredWeapon = "Pistol";
     public hp = 200;
 
+    @property(Node) normalPart: Node = null!;
+    @property(Node) armyPart: Node = null!;
     @property(Node) pistolWeapon: Node = null!;
     @property(Node) akWeapon: Node = null!;
-    @property moveSpeed: number = 1.2;
+    @property(Node) thoughtBubbleNode: Node = null!;
+    @property moveSpeed: number = 1.3;
 
     public queueSlot: QueueSlotData | null = null;
     public counterSlot: CounterSlotData | null = null;
@@ -43,110 +43,119 @@ export class UnitController extends MovableActor {
     private attackTimer = 0;
 
     start() {
-        if (this.pistolWeapon) this.pistolWeapon.active = false;
-        if (this.akWeapon) this.akWeapon.active = false;
-
-        GameManager.Instance.registerUnit(this);
+        this.resolveMeshParts();
+        GameManager.Instance?.registerUnit(this);
 
         if (this.queueSlot) {
             const target = this.queueSlot.node.worldPosition;
             const dist = Vec3.distance(this.node.worldPosition, target);
-            const duration = Math.max(0.15, dist / this.moveSpeed);
+            const duration = Math.max(0.2, dist / this.moveSpeed);
 
             this.moveTo(target, duration, () => {
                 this.state = "queue";
                 tween(this.node)
-    .to(0.3, {
-        eulerAngles: new Vec3(this.node.eulerAngles.x, 0, this.node.eulerAngles.z)
-    })
-    .start();
-                   
-    
+                    .to(0.25, {
+                        eulerAngles: new Vec3(this.node.eulerAngles.x, 0, this.node.eulerAngles.z)
+                    })
+                    .start();
+                GameManager.Instance?.onNPCArrivedQueue(this);
             });
-           
         }
     }
 
+    private resolveMeshParts() {
+        if (!this.normalPart) this.normalPart = this.node.getChildByName("Body_01_blackjacket")!;
+        if (!this.armyPart) this.armyPart = this.node.getChildByName("1")!;
+        if (!this.pistolWeapon) this.pistolWeapon = this.node.getChildByName("Pistol")!;
+        if (!this.akWeapon) this.akWeapon = this.node.getChildByName("AK")!;
+
+        if (this.normalPart) this.normalPart.active = true;
+        if (this.armyPart) this.armyPart.active = false;
+        if (this.pistolWeapon) this.pistolWeapon.active = false;
+        if (this.akWeapon) this.akWeapon.active = false;
+        if (this.thoughtBubbleNode) this.thoughtBubbleNode.active = false;
+    }
+
     update(dt: number) {
-        if (this.state == "attacking") {
+        if (this.state === "attacking") {
             this.updateAttack(dt);
         }
     }
 
-    moveToCounter(onArrived?: () => void) {
-        this.state = "moveCounter";
-
-        if (this.queueSlot) {
-            this.counterSlot = GameManager.Instance.counterSlots.find(c => c.slotID === this.queueSlot!.slotID) || null;
-        }
-
-
-        const target = this.counterSlot ? this.counterSlot.npcPos.worldPosition : this.node.worldPosition;
-        const dist = Vec3.distance(this.node.worldPosition, target);
-        const duration = Math.max(0.2, dist / this.moveSpeed);
-
-        this.moveTo(target, duration, () => {
-            this.state = "counterWaiting";
-            
-            if (onArrived) 
-                {onArrived();
-                  
-                }
-        });
-         
+    /**
+     * Show speech bubble with desired weapon icon above head
+     */
+    public showThoughtBubble(weaponType: string) {
+        this.desiredWeapon = weaponType;
+        GameManager.Instance?.showThoughtBubble(this, weaponType);
     }
 
-    receiveWeapon(type: string) {
+    public hideThoughtBubble() {
+        GameManager.Instance?.hideThoughtBubble(this);
+    }
+
+    /**
+     * Receive crafted weapon, transform into soldier, reward coins, and advance to attack Boss
+     */
+    public receiveWeapon(type: string) {
         this.desiredWeapon = type;
+        this.hideThoughtBubble();
 
-        if (this.pistolWeapon) this.pistolWeapon.active = (type == "Pistol");
-        if (this.akWeapon) this.akWeapon.active = (type == "AK");
+        // 1. Transform from civilian to combat soldier with uniform & weapon
+        if (this.normalPart) this.normalPart.active = false;
+        if (this.armyPart) this.armyPart.active = true;
+        if (this.pistolWeapon) this.pistolWeapon.active = (type === "Pistol");
+        if (this.akWeapon) this.akWeapon.active = (type === "AK");
 
-        const reward = type == "AK" ? 30 : 10;
-        GameManager.Instance.addCoin(reward);
+        // 2. Play 2.5D Coin Fly reward
+        const reward = type === "AK" ? 25 : 25;
+        GameManager.Instance?.addCoin(reward, this.node.worldPosition);
         SoundManager.Instance?.playFinishOrder();
 
+        // 3. Move up to frontline to attack Boss
         this.scheduleOnce(() => {
             this.moveAttack();
-        }, 0.6);
+        }, 0.15);
     }
 
     moveAttack() {
-        let targetSlot: SlotData | null = null;
+        if (this.state === "dead") return;
 
-        for (const slot of GameManager.Instance.attackSlots) {
-            if (!slot.occupied) {
-                slot.occupied = true;
-                targetSlot = slot;
-                break;
-            }
-        }
+        const targetSlot = GameManager.Instance.claimAttackSlot(this);
 
         if (!targetSlot) {
-
             this.state = "counterWaiting";
             this.playAnim("Idle");
             this.scheduleOnce(() => {
                 this.moveAttack();
-            }, 0.5);
+            }, 0.4);
             return;
         }
 
+        // Vacate queue slot and advance the queue cleanly
         if (this.queueSlot && this.queueSlot.npc === this) {
             this.queueSlot.npc = null;
+            this.queueSlot = null;
+            GameManager.Instance.advanceQueue();
         }
-        this.queueSlot = null;
 
         this.assignedSlot = targetSlot;
         this.state = "moveAttack";
 
         const dist = Vec3.distance(this.node.worldPosition, targetSlot.node.worldPosition);
-        const duration = Math.max(0.3, dist / this.moveSpeed);
-        if (BossController.Instance)
+        const duration = Math.max(0.35, dist / this.moveSpeed);
+
+        if (BossController.Instance) {
             this.lookAtTarget(BossController.Instance.node.worldPosition);
+        }
+
         this.moveTo(targetSlot.node.worldPosition, duration, () => {
             this.state = "attacking";
-            this.playAnim("Attack_2");
+            if (BossController.Instance) {
+                this.lookAtTarget(BossController.Instance.node.worldPosition);
+            }
+            const animName = this.desiredWeapon === "AK" ? "Attack_3" : "Attack_2";
+            this.playAnim(animName);
         });
     }
 
@@ -154,39 +163,42 @@ export class UnitController extends MovableActor {
         this.attackTimer -= dt;
         if (this.attackTimer > 0) return;
 
-        const isAK = this.desiredWeapon == "AK";
+        const isAK = this.desiredWeapon === "AK";
         const dmg = isAK ? AK_DAMAGE : PISTOL_DAMAGE;
 
-        BossController.Instance.takeDamage(dmg);
+        BossController.Instance?.takeDamage(dmg);
         SoundManager.Instance?.playGunshot();
         this.attackTimer = isAK ? AK_FIRE_RATE : PISTOL_FIRE_RATE;
     }
 
     takeDamage(dmg: number) {
-        if (this.state == "dead") return;
+        if (this.state === "dead") return;
         this.hp -= dmg;
         if (this.hp > 0) return;
         this.die();
     }
 
     die() {
+        if (this.state === "dead") return;
         this.state = "dead";
         SoundManager.Instance?.playDeath();
+
         if (this.assignedSlot) {
-            this.assignedSlot.occupied = false;
+            GameManager.Instance.releaseAttackSlot(this);
+            this.assignedSlot = null;
         }
 
         if (this.queueSlot && this.queueSlot.npc === this) {
             this.queueSlot.npc = null;
+            this.queueSlot = null;
+            GameManager.Instance.advanceQueue();
         }
-        this.queueSlot = null;
 
         GameManager.Instance.removeUnit(this);
-        BossController.Instance.healOnKill();
-        GameManager.Instance.trySpawnNPC();
+        BossController.Instance?.healOnKill();
 
         this.scheduleOnce(() => {
             this.node.destroy();
-        }, 0.6);
+        }, 0.5);
     }
 }

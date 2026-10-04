@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cocos Creator Module Optimizer & Size Analyzer</title>
+    <style>
+        :root {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-blue: #38bdf8;
+            --border: #334155;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+            padding: 24px;
+        }
+        .container { max-width: 1100px; margin: 0 auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 24px; }
+        .header h1 { margin: 0; font-size: 24px; color: var(--accent-blue); }
+        .badge { background: #0284c7; color: #fff; padding: 4px 10px; border-radius: 9999px; font-size: 13px; font-weight: 600; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: var(--bg-card); padding: 18px; border-radius: 12px; border: 1px solid var(--border); }
+        .stat-card h3 { margin: 0 0 8px 0; font-size: 14px; color: var(--text-muted); text-transform: uppercase; }
+        .stat-card .value { font-size: 28px; font-weight: bold; }
+        .val-green { color: var(--accent-green); }
+        .val-red { color: var(--accent-red); }
+        .val-blue { color: var(--accent-blue); }
+        .section-title { font-size: 18px; font-weight: 600; margin: 24px 0 12px 0; display: flex; align-items: center; gap: 8px; }
+        .table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 24px; }
+        .table th, .table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+        .table th { background: #1e293b; color: var(--text-muted); font-size: 13px; font-weight: 600; text-transform: uppercase; }
+        .tag-active { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: bold; }
+        .tag-excluded { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: bold; }
+        .tag-heavy { background: #ef4444; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 6px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>📉 Cocos Creator Module Optimizer & Size Analyzer</h1>
+                <p style="margin: 4px 0 0 0; color: var(--text-muted);">Quét tự động AST TypeScript, Scene & Prefabs cho Profile: <strong>Vscode module</strong></p>
+            </div>
+            <div class="badge">Engine: 3.8.8</div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Modules Đang Dùng</h3>
+                <div class="value val-green">10 <span style="font-size: 16px; font-weight: normal; color: var(--text-muted);">modules</span></div>
+            </div>
+            <div class="stat-card">
+                <h3>Modules Đã Exclude</h3>
+                <div class="value val-red">25 <span style="font-size: 16px; font-weight: normal; color: var(--text-muted);">modules</span></div>
+            </div>
+            <div class="stat-card">
+                <h3>Dung Lượng Tiết Kiệm</h3>
+                <div class="value val-blue">~4.2 - 5.5 MB</div>
+            </div>
+        </div>
+
+        <div class="section-title" style="color: var(--accent-green);">
+            <span>🟢</span> Modules Đang Sử Dụng Trong Dự Án
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Tên Module</th>
+                    <th>Mã Module</th>
+                    <th>Danh mục</th>
+                    <th>Dấu vết AST / Component</th>
+                    <th>Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                <tr>
+                    <td><strong>Core Engine Base</strong></td>
+                    <td><code>base</code></td>
+                    <td>Core</td>
+                    <td style="color: var(--text-muted); font-size: 13px;">Core Required</td>
+                    <td><span class="tag-active">ENABLED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>WebGL 1.0 Graphics</strong></td>
+                    <td><code>gfx-webgl</code></td>
+                    <td>Graphics</td>
+                    <td style="color: var(--text-muted); font-size: 13px;">Camera</td>
+                    <td><span class="tag-active">ENABLED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>3D Core & MeshRenderer</strong></td>
+                    <td><code>3d</code></td>
+                    <td>3D</td>
+                    <td style="color: var(--text-muted); font-size: 13px;">MeshRenderer, SkinnedMeshRenderer, DirectionalLight, SkyboxInfo</td>
+                    <td><span class="tag-active">ENABLED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>2D Core & Canvas</strong></td>
+                    <td><code>2d</code></td>
+                    <td>2D</td>
+                    <td style="color: var(--text-muted); font-size: 13px;">Canvas, RenderRoot2D, Sprite, UITransform</td>
+                    <td><span class="tag-active">ENABLED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>UI System (Button, Label, Widget)</strong></td>
+                    <td><code>ui</code></td>
+                    <td>UI</td>
+                    <td style="color: var(--text-muted); font-size: 13px;">Button, Label, ProgressBar, Widget</td>
+                    <td><span class="tag-active">ENABLED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Affine Transform (2D Transform)</strong></td>
+                    <td><code>affine-transform</code></td>
+                    <td>2D</td>
+                    <td style="color: var(--text-muted); font-size: 13px;">UITransform</td>
+                    <td><span class="tag-active">ENABLED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Animation System</strong></td>
+                    <td><code>animation</code></td>
+                    <td>Animation</td>
+                    <td style="color: var(--text-muted); font-size: 13px;">Animation, SkeletalAnimation</td>
+                    <td><span class="tag-active">ENABLED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Skeletal Animation</strong></td>
+                    <td><code>skeletal-animation</code></td>
+                    <td>Animation</td>
+                    <td style="color: var(--text-muted); font-size: 13px;">SkeletalAnimation, SkinInfo</td>
+                    <td><span class="tag-active">ENABLED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Audio System</strong></td>
+                    <td><code>audio</code></td>
+                    <td>Media</td>
+                    <td style="color: var(--text-muted); font-size: 13px;">AudioSource, AudioClip</td>
+                    <td><span class="tag-active">ENABLED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Tween System</strong></td>
+                    <td><code>tween</code></td>
+                    <td>Logic</td>
+                    <td style="color: var(--text-muted); font-size: 13px;">tween, Tween</td>
+                    <td><span class="tag-active">ENABLED</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="section-title" style="color: var(--accent-red);">
+            <span>🔴</span> Modules Đã Exclude (Loại Bỏ Để Tối Ưu Nhẹ Nhất)
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Tên Module</th>
+                    <th>Mã Module</th>
+                    <th>Danh mục</th>
+                    <th>Dung lượng tiết kiệm</th>
+                    <th>Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                <tr>
+                    <td><strong>WebGL 2.0 Graphics</strong></td>
+                    <td><code>gfx-webgl2</code></td>
+                    <td>Graphics</td>
+                    <td style="color: var(--accent-blue); font-weight: bold;">~800 KB</td>
+                    <td><span class="tag-excluded">EXCLUDED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>WebGPU Graphics</strong></td>
+                    <td><code>gfx-webgpu</code></td>
+                    <td>Graphics</td>
+                    <td style="color: var(--accent-blue); font-weight: bold;">~1.0 MB</td>
+                    <td><span class="tag-excluded">EXCLUDED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>2D Mask</strong></td>
+                    <td><code>mask</code></td>
+                    <td>UI</td>
+                    <td style="color: var(--accent-blue); font-weight: bold;">~150 KB</td>
+                    <td><span class="tag-excluded">EXCLUDED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>RichText</strong></td>
+                    <td><code>rich-text</code></td>
+                    <td>UI</td>
+                    <td style="color: var(--accent-blue); font-weight: bold;">~350 KB</td>
+                    <td><span class="tag-excluded">EXCLUDED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Graphics (Drawing API)</strong></td>
+                    <td><code>graphics</code></td>
+                    <td>2D</td>
+                    <td style="color: var(--accent-blue); font-weight: bold;">~250 KB</td>
+                    <td><span class="tag-excluded">EXCLUDED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>UI Skew Effect</strong></td>
+                    <td><code>ui-skew</code></td>
+                    <td>UI</td>
+                    <td style="color: var(--accent-blue); font-weight: bold;">~80 KB</td>
+                    <td><span class="tag-excluded">EXCLUDED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>2D Sorting</strong></td>
+                    <td><code>sorting-2d</code></td>
+                    <td>2D</td>
+                    <td style="color: var(--accent-blue); font-weight: bold;">~80 KB</td>
+                    <td><span class="tag-excluded">EXCLUDED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>3D Physics (Ammo.js / Bullet)</strong><span class="tag-heavy">SIÊU NẶNG</span></td>
+                    <td><code>physics-ammo</code></td>
+                    <td>Physics</td>
+                    <td style="color: var(--accent-blue); font-weight: bold;">~1.8 MB</td>
+                    <td><span class="tag-excluded">EXCLUDED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>3D Physics (Cannon.js)</strong><span class="tag-heavy">SIÊU NẶNG</span></td>
+                    <td><code>physics-cannon</code></td>
+                    <td>Physics</td>
+                    <td style="color: var(--accent-blue); font-weight: bold;">~600 KB</td>
+                    <td><span class="tag-excluded">EXCLUDED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>3D Physics (PhysX)</strong><span class="tag-heavy">SIÊU NẶNG</span></td>
+                    <td><code>physics-physx</code></td>
+                    <td>Physics</td>
+                    <td style="color: var(--accent-blue); font-weight: bold;">~2.2 MB</td>
+                    <td><span class="tag-excluded">EXCLUDED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>3D Physics (Builtin Collision)</strong></td>
+                    <td><code>physics-builtin</code></td>
+                    <td>Physics</td>
+                    <td style="color: var(--accent-blue); font-weight: bold;">~250 KB</td>
+                    <td><span class="tag-excluded">EXCLUDED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>2D Physics (Box2D)</strong><span class="tag-heavy">SIÊU NẶNG</span></td>
+                    <td><code>physics-2d-box2d</code></td>
+                    <td>Physics</td>
+                    <td style="color: var(--accent-blue); font-weight: bold;">~750 KB</td>
+                    <td><span class="tag-excluded">EXCLUDED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Spine 2D Runtime (3.8)</strong><span class="tag-heavy">SIÊU NẶNG</span></td>
+                    <td><code>spine-3.8</code></td>
+                    <td>Animation</td>
+                    <td style="color: var(--accent-blue); font-weight: bold;">~500 KB</td>
+                    <td><span class="tag-excluded">EXCLUDED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Spine 2D Runtime (4.2)</strong><span class="tag-heavy">SIÊU NẶNG</span></td>
+                    <td><code>spine-4.2</code></td>
+                    <td>Animation</td>
+                    <td style="color: var(--accent-blue); font-weight: bold;">~550 KB</td>
+                    <td><span class="tag-excluded">EXCLUDED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>DragonBones 2D Runtime</strong></td>
+                    <td><code>dragon-bones</code></td>
+                    <td>Animation</td>
+                    <td style="color: var(--accent-blue); font-weight: bold;">~350 KB</td>
+                    <td><span class="tag-excluded">EXCLUDED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>WebSocket Client & Server</strong></td>
+                    <td><code>websocket</code></td>
+                    <td>Network</td>
+                    <td style="color: var(--accent-blue); font-weight: bold;">~120 KB</td>
+                    <td><span class="tag-excluded">EXCLUDED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>3D Terrain</strong></td>
+                    <td><code>terrain</code></td>
+                    <td>3D</td>
+                    <td style="color: var(--accent-blue); font-weight: bold;">~400 KB</td>
+                    <td><span class="tag-excluded">EXCLUDED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>TiledMap (TMX)</strong></td>
+                    <td><code>tiled-map</code></td>
+                    <td>2D</td>
+                    <td style="color: var(--accent-blue); font-weight: bold;">~300 KB</td>
+                    <td><span class="tag-excluded">EXCLUDED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Video Player</strong></td>
+                    <td><code>video</code></td>
+                    <td>Media</td>
+                    <td style="color: var(--accent-blue); font-weight: bold;">~200 KB</td>
+                    <td><span class="tag-excluded">EXCLUDED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>WebView Component</strong></td>
+                    <td><code>webview</code></td>
+                    <td>UI</td>
+                    <td style="color: var(--accent-blue); font-weight: bold;">~180 KB</td>
+                    <td><span class="tag-excluded">EXCLUDED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>3D Particle System</strong></td>
+                    <td><code>particle</code></td>
+                    <td>Effects</td>
+                    <td style="color: var(--accent-blue); font-weight: bold;">~450 KB</td>
+                    <td><span class="tag-excluded">EXCLUDED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>2D Particle System</strong></td>
+                    <td><code>particle-2d</code></td>
+                    <td>Effects</td>
+                    <td style="color: var(--accent-blue); font-weight: bold;">~250 KB</td>
+                    <td><span class="tag-excluded">EXCLUDED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Marionette Animation Graph</strong></td>
+                    <td><code>marionette</code></td>
+                    <td>Animation</td>
+                    <td style="color: var(--accent-blue); font-weight: bold;">~350 KB</td>
+                    <td><span class="tag-excluded">EXCLUDED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Light Probe & Static GI</strong></td>
+                    <td><code>light-probe</code></td>
+                    <td>3D</td>
+                    <td style="color: var(--accent-blue); font-weight: bold;">~200 KB</td>
+                    <td><span class="tag-excluded">EXCLUDED</span></td>
+                </tr>
+                <tr>
+                    <td><strong>3D Primitives Generator</strong></td>
+                    <td><code>primitive</code></td>
+                    <td>3D</td>
+                    <td style="color: var(--accent-blue); font-weight: bold;">~150 KB</td>
+                    <td><span class="tag-excluded">EXCLUDED</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

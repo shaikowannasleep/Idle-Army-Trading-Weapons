@@ -382,6 +382,26 @@
       ],
       "subMetas": {}
     },
+    "ef396": {
+      "importer": "gltf-embeded-image",
+      "uuid": "ebea6d27-74d4-49f0-a45f-b105c01bb3fe@ef396",
+      "displayName": "",
+      "id": "ef396",
+      "name": "base_color_texture-1.image",
+      "userData": {
+        "gltfIndex": 1,
+        "fixAlphaTransparencyArtifacts": true,
+        "hasAlpha": true,
+        "type": "texture"
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".json",
+        ".png"
+      ],
+      "subMetas": {}
+    },
     "0a1ef": {
       "importer": "texture",
       "uuid": "ebea6d27-74d4-49f0-a45f-b105c01bb3fe@0a1ef",
@@ -418,8 +438,8 @@
         "magfilter": "linear",
         "mipfilter": "none",
         "anisotropy": 0,
-        "isUuid": false,
-        "imageUuidOrDatabaseUri": "db://assets/resources/asset/Map/Characters/Customers/Customers_Male/Textures/TT_citizens_B.tga"
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "ebea6d27-74d4-49f0-a45f-b105c01bb3fe@ef396"
       },
       "ver": "1.0.22",
       "imported": true,
@@ -501,7 +521,7 @@
       },
       {
         "name": "base_color_texture",
-        "uri": "db://assets/resources/asset/Map/Characters/Customers/Customers_Male/Textures/TT_citizens_B.tga"
+        "uri": "ebea6d27-74d4-49f0-a45f-b105c01bb3fe@ef396"
       }
     ],
     "fbx": {
@@ -941,7 +961,7 @@
       "overdraw": true
     },
     "meshSimplify": {
-      "enable": true,
+      "enable": false,
       "targetRatio": 0.67
     },
     "meshCompress": {

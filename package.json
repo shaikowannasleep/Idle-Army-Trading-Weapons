@@ -3,5 +3,15 @@
   "uuid": "a63d4351-07ba-4d59-9501-ee0f266fd61e",
   "creator": {
     "version": "3.8.8"
+  },
+  "version": "3.8.8",
+  "scripts": {
+    "pack:super": "node ./scripts/fast-super-html.js",
+    "clean:super": "rm -rf ./build/super-html",
+    "scan:modules": "node ./scripts/scan-modules.js",
+    "prune:assets": "node ./scripts/prune-unused-assets.js",
+    "restore:assets": "node ./scripts/restore-unused-assets.js",
+    "view:modules": "open ./scripts/module-analyzer/index.html",
+    "open:super": "open ./build/super-html"
   }
 }

@@ -1,4 +1,4 @@
-import { _decorator, Component, SkeletalAnimation, Vec3 } from 'cc';
+import { _decorator, Component, SkeletalAnimation, Vec3, Node } from 'cc';
 import { GameManager } from './GameManager';
 import { WorldHPBar } from './HPBarFollower';
 
@@ -47,20 +47,42 @@ export class BossController extends Component {
 
         this.state = 'spawning';
 
-        const spawnState = this.anim.getState('Boss 1_Spawn');
-        if (spawnState) {
-            spawnState.speed = 0.45;
+        // Hide HP bar initially until camera zoom-out completes + 0.5s
+        if (this.hpBarUI && this.hpBarUI.node && this.hpBarUI.node.isValid) {
+            this.hpBarUI.node.active = false;
         }
 
-        this.playAnim('Boss 1_Spawn');
+        // Initially hide Boss model to allow 1s loading / camera preparation
+        this.node.setScale(new Vec3(0, 0, 0));
 
-        this.anim.once(SkeletalAnimation.EventType.FINISHED, () => {
-            this.state = 'idle';
-            this.playAnim('Boss 1_Idle');
-        }, this);
+        // Wait 1.0s before activating Boss and playing spawn anim at normal speed
+        this.scheduleOnce(() => {
+            if (!this.node || !this.node.isValid) return;
+            this.node.setScale(new Vec3(1, 1, 1));
 
-        if (this.hpBarUI) 
+            const spawnState = this.anim.getState('Boss 1_Spawn');
+            if (spawnState) {
+                spawnState.speed = 1.0; // Normal animation speed
+            }
+
+            this.playAnim('Boss 1_Spawn', true);
+
+            this.anim.once(SkeletalAnimation.EventType.FINISHED, () => {
+                this.state = 'idle';
+                this.playAnim('Boss 1_Idle');
+            }, this);
+        }, 1.0);
+    }
+
+    /**
+     * Show HP Bar after Camera zoom out completes + 0.5s
+     */
+    public showHPBar() {
+        if (this.hpBarUI && this.hpBarUI.node && this.hpBarUI.node.isValid) {
+            this.hpBarUI.node.active = true;
             this.hpBarUI.updateHP(this.hp, this.maxHp);
+            console.log("🩸 [BossController] HP Bar displayed after camera zoom-out + 0.5s!");
+        }
     }
 
     // Play boss animation clip
@@ -118,131 +140,111 @@ export class BossController extends Component {
         let inRangeUnits = [];
         let bossPos = this.node.worldPosition;
 
-        for (let i = 0; i < GameManager.Instance.activeUnits.length; i++) {
-            let unit = GameManager.Instance.activeUnits[i];
+        for (let unit of GameManager.Instance.activeUnits) {
+            if (unit.state !== 'attacking') continue;
 
-            if (unit && unit.node && unit.node.isValid) {
-                let nodeName = unit.node.name.toLowerCase();
-                if (nodeName.includes('unit')) {
-                    let distance = Vec3.distance(bossPos, unit.node.worldPosition);
-
-                    if (distance <= this.attackRadius && unit.state === 'attacking') {
-                        inRangeUnits.push(unit);
-                    }
-                }
+            let dist = Vec3.distance(bossPos, unit.node.worldPosition);
+            if (dist <= this.attackRadius) {
+                inRangeUnits.push(unit);
             }
         }
+
         return inRangeUnits;
     }
 
-    // Play attack clip and damage a random target
+    // Normal attack on targets
     doAttack(targets: any[]) {
         this.state = 'attacking';
 
-        const clip = ATTACK_CLIPS[Math.floor(Math.random() * ATTACK_CLIPS.length)];
-        this.playAnim(clip);
+        let clipIndex = Math.floor(Math.random() * ATTACK_CLIPS.length);
+        let clip = ATTACK_CLIPS[clipIndex];
 
-        if (targets.length > 0) {
-            let randomTarget = targets[Math.floor(Math.random() * targets.length)];
-            randomTarget.takeDamage(this.currentDamage);
-        }
+        this.playAnim(clip, true);
 
         this.scheduleOnce(() => {
-            if (this.state == 'attacking') {
+            if (this.state !== 'attacking') return;
+
+            for (let unit of targets) {
+                if (unit && unit.node && unit.node.isValid && unit.state === 'attacking') {
+                    unit.takeDamage(this.currentDamage);
+                }
+            }
+        }, 0.5);
+
+        this.anim.once(SkeletalAnimation.EventType.FINISHED, () => {
+            if (this.state === 'attacking') {
                 this.state = 'idle';
                 this.playAnim('Boss 1_Idle');
             }
-        }, 0.8);
+        }, this);
     }
 
-    // Jump back, then a heavy combo hit
+    // High damage combo attack
     doComboAttack(targets: any[]) {
-        this.state = 'attacking';
+        this.state = 'combo';
 
-        this.playAnim('Boss 1_Jump back');
-        const jumpBackDuration = this.anim?.getState('Boss 1_Jump back')?.duration ?? 0.4;
+        let clipIndex = Math.floor(Math.random() * ATTACK_CLIPS.length);
+        let clip = ATTACK_CLIPS[clipIndex];
+
+        this.playAnim(clip, true);
+
+        let comboDamage = this.currentDamage * COMBO_DAMAGE_MULT;
 
         this.scheduleOnce(() => {
-            if (this.state != 'attacking') return;
+            if (this.state !== 'combo') return;
 
-            this.playAnim('Boss 1_Combo');
-
-            if (targets.length > 0) {
-                let randomTarget = targets[Math.floor(Math.random() * targets.length)];
-                randomTarget.takeDamage(this.currentDamage * COMBO_DAMAGE_MULT);
-            }
-
-            const comboDuration = this.anim?.getState('Boss 1_Combo')?.duration ?? 1.0;
-
-            this.scheduleOnce(() => {
-                if (this.state == 'attacking') {
-                    this.state = 'idle';
-                    this.playAnim('Boss 1_Idle');
+            for (let unit of targets) {
+                if (unit && unit.node && unit.node.isValid && unit.state === 'attacking') {
+                    unit.takeDamage(comboDamage);
                 }
-            }, comboDuration);
-        }, jumpBackDuration);
+            }
+        }, 0.5);
+
+        this.anim.once(SkeletalAnimation.EventType.FINISHED, () => {
+            if (this.state === 'combo') {
+                this.state = 'idle';
+                this.playAnim('Boss 1_Idle');
+            }
+        }, this);
     }
 
-    // Apply damage, handle stun/enrage/death
+    // Boss takes damage from unit attacks
     takeDamage(amount: number) {
-        if (this.state === 'stunned' || this.state === 'spawning' || this.state === 'dead')
-            return;
+        if (this.state === 'spawning' || this.state === 'dead') return;
 
         this.hp -= amount;
 
-        if (this.hpBarUI) this.hpBarUI.updateHP(this.hp, this.maxHp);
-
         if (this.hp <= 0) {
             this.hp = 0;
-            this.healthBars = Math.max(0, this.healthBars - 1);
-
-            let barsLost = 999 - this.healthBars;
-            this.currentDamage = 15 + (barsLost * 25);
-
-            if (this.healthBars <= 0) {
-                this.state = 'dead';
-                this.playAnim('Boss 1_Die');
-                return;
-            }
-
             this.state = 'stunned';
             this.playAnim('Boss 1_Stun');
-
-            return;
-        }
-
-        if (this.state != 'idle') return;
-
-        this.playAnim('Boss 1_Bi tan cong', true, 0.02);
-        this.hitCount++;
-
-        if (this.hitCount >= 5) {
             this.hitCount = 0;
-            const targets = this.getTargetsInRange();
-            if (targets.length > 0) {
-                this.doComboAttack(targets);
-                this.attackCooldown = 3.0;
+        } else {
+            this.hitCount++;
+            if (this.hitCount >= 5 && this.state === 'idle') {
+                this.hitCount = 0;
+                this.playAnim('Boss 1_Hit', true);
+
+                this.anim.once(SkeletalAnimation.EventType.FINISHED, () => {
+                    if (this.state === 'idle') {
+                        this.playAnim('Boss 1_Idle');
+                    }
+                }, this);
             }
         }
+
+        if (this.hpBarUI) {
+            this.hpBarUI.updateHP(this.hp, this.maxHp);
+        }
     }
 
-    // Reset boss to idle when no targets remain
-    onNoTargets() {
-        if (this.state !== 'idle' && this.state !== 'attacking')
-            return;
-
-        this.state = 'idle';
-        this.playAnim('Boss 1_Idle');
-    }
-
-    // Heal boss when a unit is killed
+    // Restore health when defeating a unit
     healOnKill() {
-        if (this.state !== 'stunned' && this.state !== 'dead') {
-            this.hp += 50;
+        this.hp += 100;
+        if (this.hp > this.maxHp) this.hp = this.maxHp;
 
-            if (this.hp > this.maxHp) this.hp = this.maxHp;
-
-            if (this.hpBarUI) this.hpBarUI.updateHP(this.hp, this.maxHp);
+        if (this.hpBarUI) {
+            this.hpBarUI.updateHP(this.hp, this.maxHp);
         }
     }
 }

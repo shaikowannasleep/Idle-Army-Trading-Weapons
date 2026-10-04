@@ -31,14 +31,12 @@
       }
     }
   },
+  "textureCompressConfig": {
+    "genMipmaps": true
+  },
   "splash-setting": {
     "logo": {
-      "type": "default"
-    },
-    "displayRatio": 1.2,
-    "totalTime": 500
-  },
-  "textureCompressConfig": {
-    "genMipmaps": false
+      "type": "none"
+    }
   }
 }

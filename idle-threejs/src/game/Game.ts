@@ -12,6 +12,7 @@ import { Boss, bossAttackInterval, bossWallDamage } from './Boss';
 import { Staff, Unit } from './Actors';
 import { Loot, type LootKind } from './Loot';
 import { Armory, Barricade, Counters, Pad } from './Props';
+import { Pathfinder } from './Pathfinder';
 import { WEAPONS, WEAPON_BY_ID, buildWeaponKit, displayMesh, proceduralMaterial, rocketProjectile, type WeaponDef, type WeaponId, type WeaponKit } from './Weapons';
 import {
   ARMORY_Z,
@@ -135,6 +136,8 @@ export class Game {
   private camPos = new THREE.Vector3();
   private hudTargets = { coin: new THREE.Vector3(), gem: new THREE.Vector3(), bag: new THREE.Vector3() };
   private hudAnchors = { coin: { x: 0, y: 0 }, gem: { x: 0, y: 0 }, bag: { x: 0, y: 0 } };
+  private readonly pathfinder: Pathfinder;
+  private currentTutorialTarget: THREE.Vector3 | null = null;
 
   constructor(
     private engine: Engine,
@@ -196,6 +199,23 @@ export class Game {
       scene.add(mesh);
       this.rockets.push({ mesh, from: new THREE.Vector3(), ctrl: new THREE.Vector3(), to: new THREE.Vector3(), t: 0, dmg: 0, active: false });
     }
+
+    this.pathfinder = new Pathfinder();
+
+    // Give Input the camera so it can unproject tap coordinates.
+    input.camera = engine.camera;
+
+    input.onTapGround = (pos) => {
+      this.handleTapGround(pos);
+    };
+
+    hud.onLabelClick = (id) => {
+      this.handleLabelClick(id);
+    };
+
+    hud.onHandClick = () => {
+      this.handleHandClick();
+    };
 
     input.onDown = () => {
       this.idleT = 0;
@@ -455,6 +475,9 @@ export class Game {
   // Main update
 
   update(rawDt: number): void {
+    // Tap-to-move: advance destination tracking every frame.
+    this.input.tick(this.player.root.position, 0.4);
+
     this.slowmo = Math.max(0, this.slowmo - rawDt);
     const targetScale = this.phase === 'collapse' ? 0.3 : this.slowmo > 0 ? 0.35 : 1;
     this.timeScale = lerp(this.timeScale, targetScale, damp(10, rawDt));
@@ -565,24 +588,76 @@ export class Game {
   }
 
   // =============================================================================================
-  // Player
+  // Player & Navigation
 
   private obstacleCache: Box[] | null = null;
 
   private obstacles(): Box[] {
     if (this.obstacleCache) return this.obstacleCache;
     const b: Box[] = [
-      { x0: -4.35, x1: -1.65, z0: 3.4, z1: 4.4 },
-      { x0: 3.0, x1: 8.7, z0: 0.4, z1: 5.9 },
+      { x0: -4.2, x1: -1.8, z0: 3.5, z1: 4.3 }, // counter desk 1
+      { x0: 3.2, x1: 8.7, z0: 0.4, z1: 5.9 }, // main tent
       ...LOOT_BLOCKERS.map((l) => ({ x0: l.x0 + 0.25, x1: l.x1 - 0.25, z0: l.z0 + 0.25, z1: l.z1 - 0.25 })),
     ];
     for (const s of this.armory.slots) {
       const x = (s.crate.visible ? s.crate : s.locked).position.x;
-      b.push({ x0: x - 0.6, x1: x + 0.6, z0: ARMORY_Z - 0.6, z1: ARMORY_Z + 0.6 });
+      b.push({ x0: x - 0.45, x1: x + 0.45, z0: ARMORY_Z - 0.45, z1: ARMORY_Z + 0.45 });
     }
     if (this.expanded) b.push({ x0: -6.9, x1: -5.9, z0: 0.9, z1: 3.5 });
     this.obstacleCache = b;
     return b;
+  }
+
+  private navigateTo(targetPos: THREE.Vector3): void {
+    const start = this.player.root.position;
+    const clampedTarget = targetPos.clone();
+    clampedTarget.x = clamp(clampedTarget.x, PLAY_BOUNDS.x0 + 0.3, PLAY_BOUNDS.x1 - 0.3);
+    clampedTarget.z = clamp(clampedTarget.z, PLAY_BOUNDS.z0 + 0.3, PLAY_BOUNDS.z1 - 0.3);
+    const path = this.pathfinder.findPath(start, clampedTarget, this.obstacles());
+    this.input.setWaypoints(path);
+  }
+
+  private handleTapGround(pos: THREE.Vector3): void {
+    let target = pos;
+    // Snap to interaction zones if tapped close to them
+    if (Math.hypot(pos.x - COUNTERS[0].serveSpot.x, pos.z - COUNTERS[0].serveSpot.z) < 1.4) {
+      target = COUNTERS[0].serveSpot.clone();
+    } else if (this.expanded && Math.hypot(pos.x - COUNTERS[1].serveSpot.x, pos.z - COUNTERS[1].serveSpot.z) < 1.4) {
+      target = COUNTERS[1].serveSpot.clone();
+    } else if (Math.hypot(pos.x - EXPAND_PAD.x, pos.z - EXPAND_PAD.z) < 1.4) {
+      target = EXPAND_PAD.clone();
+    } else if (Math.hypot(pos.x - FORTIFY_PAD.x, pos.z - FORTIFY_PAD.z) < 1.4) {
+      target = FORTIFY_PAD.clone();
+    } else {
+      for (const p of this.pads) {
+        if (p.active && Math.hypot(pos.x - p.at.x, pos.z - p.at.z) < 1.4) {
+          target = p.at.clone();
+          break;
+        }
+      }
+    }
+    this.navigateTo(target);
+  }
+
+  private handleLabelClick(id: string): void {
+    if (id === 'c:0') {
+      this.navigateTo(COUNTERS[0].serveSpot);
+    } else if (id === 'c:1') {
+      this.navigateTo(COUNTERS[1].serveSpot);
+    } else if (id === 'expand') {
+      this.navigateTo(EXPAND_PAD);
+    } else if (id === 'fortify') {
+      this.navigateTo(FORTIFY_PAD);
+    } else if (id.startsWith('w:')) {
+      const pad = this.pads.find((p) => p.id === id);
+      if (pad) this.navigateTo(pad.at);
+    }
+  }
+
+  private handleHandClick(): void {
+    if (this.currentTutorialTarget) {
+      this.navigateTo(this.currentTutorialTarget);
+    }
   }
 
   private updatePlayer(dt: number): void {
@@ -1231,7 +1306,7 @@ export class Game {
     }
     if (this.tutorial === 0) {
       target = _c.copy(COUNTERS[0].serveSpot);
-      hint = 'DRAG to move · Stand here to sell weapons';
+      hint = 'TAP to move · Stand here to sell weapons';
       if (this.serveActive(0)) target = null;
     } else if (this.tutorial === 2) {
       if (this.loot.firstGround(_c)) {
@@ -1251,6 +1326,7 @@ export class Game {
       else if (!this.serveActive(0)) target = _c.copy(COUNTERS[0].serveSpot);
     }
     void dt;
+    this.currentTutorialTarget = target ? target.clone() : null;
     this.hud.hint(hint);
     if (target && !this.input.active) {
       const s = this.hud.project(target, cam);
@@ -1311,7 +1387,7 @@ export class Game {
       }
       // weapon offers sit on their pad (hidden while standing on it - the fill shows progress); the rest float above
       const onIt = pad.contains(this.player.root.position);
-      const s = pad.weapon ? this.hud.project(_a.set(pad.at.x, 0.05, pad.at.z), cam) : this.hud.project(_a.set(pad.at.x, 0.15, pad.at.z - 0.55), cam);
+      const s = pad.weapon ? this.hud.project(_a.set(pad.at.x, 0.2, pad.at.z + 0.35), cam) : this.hud.project(_a.set(pad.at.x, 0.2, pad.at.z - 0.45), cam);
       const remaining = Math.ceil(pad.cost - pad.paid);
       const affordable = this.coins >= remaining && this.gems >= pad.gems;
       const gemTxt = pad.gems ? ` <i class="gem-ico"></i><em>${pad.gems}</em>` : '';

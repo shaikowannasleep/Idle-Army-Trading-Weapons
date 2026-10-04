@@ -239,6 +239,7 @@ export type PadKind = 'unlock' | 'upgrade' | 'expand' | 'fortify';
 /** Idle-style pay pad: stand on it and coins drain into it until it is paid. */
 export class Pad {
   readonly group = new THREE.Group();
+  readonly ring: GroundRing;
   private fill: THREE.Mesh;
   private frameMat: THREE.MeshBasicMaterial;
   private fillMat: THREE.MeshBasicMaterial;
@@ -262,6 +263,17 @@ export class Pad {
     readonly at: THREE.Vector3,
     readonly size = 1.35,
   ) {
+    const ringColor =
+      kind === 'expand'
+        ? '#5ee7ff'
+        : kind === 'fortify'
+          ? '#ffd34d'
+          : weapon
+            ? WEAPONS.find((w) => w.id === weapon)?.color ?? '#4dff88'
+            : '#4dff88';
+    this.ring = new GroundRing(size * 0.78, ringColor);
+    this.ring.mesh.position.set(0, 0.02, 0);
+
     const tex = canvasTex(256, (g, s) => {
       const r = 46;
       const m = 14;
@@ -283,7 +295,7 @@ export class Pad {
     this.fill = new THREE.Mesh(fg, this.fillMat);
     this.fill.position.set(0, 0.01, size * 0.42);
     this.fill.renderOrder = 5;
-    this.group.add(frame, this.fill);
+    this.group.add(frame, this.fill, this.ring.mesh);
     this.group.position.copy(at).setY(0.03);
     this.group.visible = false;
   }
@@ -303,11 +315,13 @@ export class Pad {
     this.icon = icon;
     if (!this.active) this.appear = 0;
     this.active = true;
+    this.ring.mesh.visible = true;
     this.group.visible = true;
   }
 
   hide(): void {
     this.active = false;
+    this.ring.mesh.visible = false;
     this.group.visible = false;
     this.occupied = false;
   }
@@ -326,6 +340,7 @@ export class Pad {
     this.appear = Math.min(1, this.appear + dt * 3);
     const s = easeOutBack(this.appear) * (this.occupied ? 1.08 : 1 + Math.sin(time * 3) * 0.02);
     this.group.scale.set(s, 1, s);
+    this.ring.update(time, this.occupied ? 1.4 : 0.95);
     this.fill.visible = this.progress > 0.001;
     this.fill.scale.set(1, 1, Math.max(0.001, this.progress));
     this.denied = Math.max(0, this.denied - dt);

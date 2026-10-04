@@ -1,6 +1,6 @@
 # Boss Armory Idle (Three.js)
 
-A ~90-second idle playable built from the Cocos project's art, audio and UI assets. You sell weapons, customers become soldiers, the soldiers fight an evolving boss, and the boss keeps evolving until it breaks the camp. The end card then offers **CONTINUE**, which opens github.com/shaikowanansleep, or **RETRY**.
+A ~90-second idle playable built from the Cocos project's art, audio and UI assets. You sell weapons, customers become soldiers, the soldiers fight an evolving boss, and the boss keeps evolving until it breaks the camp. The end card then offers **CONTINUE**, which opens github.com/shaikowannasleep, or **RETRY**.
 
 ## Run
 

@@ -92,6 +92,8 @@ export class Hud {
   onContinue: () => void = () => {};
   onRetry: () => void = () => {};
   onMute: (muted: boolean) => void = () => {};
+  onLabelClick?: (id: string) => void;
+  onHandClick?: () => void;
   w = 1;
   h = 1;
 
@@ -142,6 +144,10 @@ export class Hud {
     this.toastEl = el('toast');
     this.hintEl = el('hint stroke');
     this.hand = el('hand', `<img src="${handImg}" alt="">`);
+    this.hand.addEventListener('pointerdown', (e) => {
+      e.stopPropagation();
+      this.onHandClick?.();
+    });
     this.flashEl = el('flash');
 
     for (let i = 0; i < 2; i++) {
@@ -359,6 +365,10 @@ export class Hud {
     let l = this.labels.get(id);
     if (!l) {
       const root = el('pad-label stroke');
+      root.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+        this.onLabelClick?.(id);
+      });
       this.labelLayer.appendChild(root);
       l = { root, key: '', visible: true, xy: '' };
       this.labels.set(id, l);

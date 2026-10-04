@@ -236,6 +236,8 @@ body {
   white-space: nowrap;
   will-change: transform;
   box-shadow: 0 3px 0 rgba(0, 0, 0, 0.4);
+  pointer-events: auto;
+  cursor: pointer;
 }
 .pad-label .ic {
   width: 30px;
@@ -390,6 +392,8 @@ body {
   opacity: 0;
   transition: opacity 0.25s;
   will-change: transform;
+  pointer-events: auto;
+  cursor: pointer;
 }
 .hand img {
   width: 100%;
@@ -445,35 +449,32 @@ body {
   }
 }
 
-/* ---------- joystick ---------- */
-.joy {
+/* ---------- tap-to-move target indicator ---------- */
+.tap-target {
   position: absolute;
   left: 0;
   top: 0;
-  width: 112px;
-  height: 112px;
-  margin: -56px 0 0 -56px;
+  width: 64px;
+  height: 64px;
+  margin: -32px 0 0 -32px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.18));
-  border: 3px solid rgba(255, 255, 255, 0.35);
+  border: 3px solid rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.12);
+  pointer-events: none;
   opacity: 0;
-  transition: opacity 0.15s;
-  will-change: transform;
+  transform: translate(0, 0) scale(0.4);
+  transition: opacity 0.12s, transform 0.12s;
+  will-change: transform, opacity;
 }
-.joy.on {
+.tap-target.on {
   opacity: 1;
+  transform: translate(var(--tx, 0), var(--ty, 0)) scale(1);
+  animation: tap-ring 0.55s ease-out forwards;
 }
-.joy-knob {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 50px;
-  height: 50px;
-  margin: -25px 0 0 -25px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #fff, #cfd8dc);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-  will-change: transform;
+@keyframes tap-ring {
+  0%   { opacity: 1; transform: scale(0.5); }
+  60%  { opacity: 0.85; transform: scale(1.15); }
+  100% { opacity: 0; transform: scale(1.6); }
 }
 
 /* ---------- end card ---------- */

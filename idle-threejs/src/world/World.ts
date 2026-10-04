@@ -55,6 +55,11 @@ export class World {
     const map = assets.models.map.scene;
     map.position.copy(MAP_OFFSET);
     map.traverse((o) => {
+      // Hide obstructive fallen logs in the camp center to make the main courtyard completely clear
+      if (o.name === 'Cylinder.003' || o.name === 'Cylinder.004') {
+        o.visible = false;
+        return;
+      }
       const m = o as THREE.Mesh;
       if (!m.isMesh) return;
       m.castShadow = true;

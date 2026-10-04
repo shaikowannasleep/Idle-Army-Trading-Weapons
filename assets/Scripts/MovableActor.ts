@@ -1,4 +1,3 @@
-
 import {
     _decorator,
     Component,
@@ -27,6 +26,17 @@ export class MovableActor extends Component {
         
         this.currentAnim = name;
         this.anim.crossFade(name, 0.15);
+    }
+
+    public getAnimDuration(name: string, fallback: number = 1.5): number {
+        if (this.anim) {
+            const state = this.anim.getState(name);
+            if (state && state.duration > 0) {
+                console.log(`⏱️ [${this.node.name}] Animation clip [${name}] duration: ${state.duration.toFixed(2)}s (speed: ${state.speed})`);
+                return state.duration / (state.speed > 0 ? state.speed : 1.0);
+            }
+        }
+        return fallback;
     }
 
     lookAtTarget(target: Vec3) {

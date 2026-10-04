@@ -12,6 +12,11 @@ export class WorldHPBar extends Component {
     private progressBar: ProgressBar = null!;
     private _uiPos: Vec3 = new Vec3();
 
+    
+         protected onLoad(): void {
+       
+          
+    }
     start() {
         this.progressBar = this.getComponent(ProgressBar)!;
     }

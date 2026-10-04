@@ -7,7 +7,7 @@ export enum PlayableEvent {
   ENDCARD_SHOWN = 'ENDCARD_SHOWN',
 }
 
-export const STORE_URL = 'https://github.com/shaikowanansleep';
+export const STORE_URL = 'https://github.com/shaikowannasleep';
 
 type AnyWindow = Window & Record<string, any>;
 

@@ -43,20 +43,17 @@ export const COUNTERS: CounterDef[] = [
 ];
 export const CUSTOMER_ENTRY = new THREE.Vector3(-15, 0, 7.4);
 
-/** Armory crates line up in front of the tent, upgrade pads below them (x avoids the map's stumps at x -0.8 / 2.6). */
-export const ARMORY_Z = 7.2;
-export const ARMORY_X = [-2.2, 0.9, 3.7, 5.5, 7.3];
-export const PAD_Z = 8.7;
+/** Armory crates sit along the southern edge; upgrade pads sit in front of them in the open courtyard. */
+export const ARMORY_Z = 7.7;
+export const ARMORY_X = [-1.8, 0.8, 3.4, 5.2, 7.0];
+export const PAD_Z = 6.2;
 
 export const EXPAND_PAD = new THREE.Vector3(-6.4, 0, 0.1);
-export const FORTIFY_PAD = new THREE.Vector3(4.0, 0, -0.9);
+export const FORTIFY_PAD = new THREE.Vector3(3.6, 0, -1.2);
 
-/** Loot landing zone (between wall and shop) and the rectangles it must avoid. */
+/** Loot landing zone (between wall and shop). */
 export const LOOT_ZONE = { x0: -5.6, x1: 5.6, z0: -4.4, z1: 0.6 };
-export const LOOT_BLOCKERS = [
-  { x0: -2.7, x1: -1.1, z0: -2.1, z1: 1.7 },
-  { x0: 0.8, x1: 2.8, z0: -3.7, z1: -2.1 },
-];
+export const LOOT_BLOCKERS: Array<{ x0: number; x1: number; z0: number; z1: number }> = [];
 
 /** Player walk bounds. */
 export const PLAY_BOUNDS = { x0: -9.5, x1: 8.2, z0: -6.9, z1: 9.4 };

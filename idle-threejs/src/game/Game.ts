@@ -32,13 +32,14 @@ import {
 import { bezier, clamp, damp, easeOutCubic, formatNum, lerp, rand } from '../core/math';
 import { PlayableAdsFlowManager } from '../tracking/PlayableAdsFlowManager';
 import { PlayableAdsSDK, PlayableEvent } from '../tracking/PlayableAdsSDK';
+import { SaveManager, type GameMode, type PlayerSaveData } from './SaveManager';
+import { calculateStageConfig, TOTAL_STAGES, type StageConfig } from './StageManager';
 
 type Phase = 'intro' | 'play' | 'collapse' | 'end';
 
 const SERVE_TIME = 0.8;
 const MAX_UNITS = 26;
 const MAX_WEAPON_LEVEL = 5;
-const APEX_TIME = 78;
 const INTRO_TIME = 2.8;
 const NATURAL_EVOLVE = [22, 40, 56, 70];
 const FIRST_SPAWN_DELAY = 0.3;
@@ -90,6 +91,11 @@ export class Game {
   private rockets: Rocket[] = [];
   private deliveries: Delivery[] = [];
   private skins: { civA: THREE.Material; civB: THREE.Material; soldier: THREE.Material };
+
+  // ---- stage & save state ----
+  saveData: PlayerSaveData = SaveManager.createInitial('classic');
+  currentStage = 1;
+  stageConfig: StageConfig = calculateStageConfig(1);
 
   // ---- run state ----
   private phase: Phase = 'intro';
@@ -222,11 +228,31 @@ export class Game {
       void this.audio.unlock().then(() => this.audio.startMusic());
     };
     input.onUp = (isDrag) => PlayableAdsFlowManager.instance.trackClick(isDrag, isDrag ? 1 : 0);
+
+    // Hud callbacks for 40-Stage progression & Modes
     hud.onRetry = () => {
       this.audio.play('click');
       PlayableAdsFlowManager.instance.trackClick(true, 1);
-      this.reset();
+      this.startStage(this.currentStage, false);
     };
+
+    hud.onNextStage = () => {
+      this.audio.play('click');
+      if (this.currentStage < TOTAL_STAGES) {
+        this.startStage(this.currentStage + 1, true); // Keep soldiers!
+      } else {
+        this.hud.banner('CAMPAIGN COMPLETED!', 'You conquered all 40 Stages!', '#ffd34d', 3000);
+      }
+    };
+
+    hud.onSelectMode = (mode: GameMode) => {
+      this.initMode(mode);
+    };
+
+    hud.onSwitchGod = () => {
+      this.initMode('infinite');
+    };
+
     hud.onContinue = () => {
       this.audio.play('click');
       PlayableAdsFlowManager.instance.trackClick(true, 1);
@@ -236,6 +262,14 @@ export class Game {
     hud.onMute = (m) => this.audio.setMuted(m);
     engine.onResize = (w, h) => this.layoutCamera(w, h);
     this.layoutCamera(window.innerWidth, window.innerHeight);
+
+    // Load save data or show mode selection
+    const loaded = SaveManager.load();
+    if (loaded) {
+      this.applySaveData(loaded);
+    } else {
+      setTimeout(() => this.hud.showModeSelect(), 100);
+    }
   }
 
   /** Hooks for the automated play-test harness (tools/perf.mjs). */
@@ -243,7 +277,12 @@ export class Game {
     return {
       teleport: (x: number, z: number) => this.player.root.position.set(x, 0, z),
       forceLose: () => this.collapse(),
+      jumpStage: (s: number) => this.startStage(s, false),
+      setGodMode: () => this.initMode('infinite'),
+      setClassicMode: () => this.initMode('classic'),
       state: () => ({
+        stage: this.currentStage,
+        mode: this.saveData?.mode ?? 'classic',
         t: +this.t.toFixed(1),
         phase: this.phase,
         coins: Math.floor(this.coins),
@@ -291,54 +330,93 @@ export class Game {
   }
 
   // =============================================================================================
-  // Run lifecycle
+  // Run lifecycle & 40-Stage Campaign
 
-  reset(): void {
+  initMode(mode: GameMode): void {
+    this.saveData = SaveManager.createInitial(mode);
+    this.applySaveData(this.saveData);
+    this.startStage(1, false);
+  }
+
+  applySaveData(data: PlayerSaveData): void {
+    this.saveData = data;
+    this.coins = data.coins;
+    this.gems = data.gems;
+    this.unlocked.clear();
+    for (const w of data.unlockedWeapons) this.unlocked.add(w);
+    for (const [w, lvl] of Object.entries(data.wLevels)) this.wLevel[w as WeaponId] = lvl;
+    this.expanded = data.expanded;
+    this.fortifyCount = data.fortifyCount;
+    this.dmgMult = data.dmgMult;
+    this.rateMult = data.rateMult;
+    this.currentStage = data.currentStage || 1;
+    this.stageConfig = calculateStageConfig(this.currentStage);
+
+    for (const w of WEAPONS) {
+      this.armory.setUnlocked(w.id, this.unlocked.has(w.id), false);
+    }
+    this.counters.setEnabled(1, this.expanded);
+    if (this.expanded) {
+      this.assistant.root.visible = true;
+      this.assistant.root.position.copy(COUNTERS[1].serveSpot);
+    }
+    this.refreshPads();
+  }
+
+  saveCurrentState(): void {
+    if (!this.saveData) return;
+    this.saveData.coins = Math.floor(this.coins);
+    this.saveData.gems = this.gems;
+    this.saveData.currentStage = this.currentStage;
+    this.saveData.unlockedWeapons = [...this.unlocked];
+    this.saveData.wLevels = { ...this.wLevel };
+    this.saveData.expanded = this.expanded;
+    this.saveData.fortifyCount = this.fortifyCount;
+    this.saveData.dmgMult = this.dmgMult;
+    this.saveData.rateMult = this.rateMult;
+    SaveManager.save(this.saveData);
+  }
+
+  startStage(stageNumber: number, keepUnits = false): void {
+    this.currentStage = Math.max(1, Math.min(TOTAL_STAGES, stageNumber));
+    this.stageConfig = calculateStageConfig(this.currentStage);
+    this.hud.setStage(this.currentStage, TOTAL_STAGES, this.stageConfig.chapterName);
+    this.hud.hideVictory();
+    this.hud.hideDefeat();
     this.hud.hideEnd();
+
     this.fx.clear();
     this.loot.clear();
-    this.phase = 'intro';
+    this.phase = 'play';
     this.t = 0;
     this.phaseT = 0;
     this.timeScale = 1;
     this.slowmo = 0;
-    this.coins = 0;
-    this.gems = 0;
-    this.totalCoins = 0;
-    this.bossesKilled = 0;
-    this.bossLevel = 1;
-    this.pendingEvolve = 0;
-    this.wallMax = 100;
-    this.wallHp = 100;
-    this.unlocked.clear();
-    this.unlocked.add('pistol');
-    for (const w of WEAPONS) this.wLevel[w.id] = 1;
-    this.dmgMult = 1;
-    this.rateMult = 1;
-    this.expanded = false;
-    this.fortifyCount = 0;
     this.spawnTimer = FIRST_SPAWN_DELAY;
     this.naturalIdx = 0;
-    this.apex = false;
-    this.queues = [[], []];
-    this.serveProgress = [0, 0];
-    this.respawnT = -1;
-    this.tutorial = 0;
-    this.idleT = 0;
     this.warnOn = false;
     this.hud.warn(false);
     this.hud.setDanger(0);
-    this.hud.hint(null);
-    this.hud.handAt(null);
-    this.input.reset();
     this.input.enabled = true;
-    this.obstacleCache = null;
 
-    for (const u of this.units) {
-      u.root.rotation.x = 0;
-      u.stop();
-      this.despawn(u);
+    // Reset wall
+    this.wallMax = Math.round(100 * Math.pow(1.15, this.fortifyCount));
+    if (keepUnits) {
+      this.wallHp = Math.min(this.wallMax, this.wallHp + this.wallMax * 0.5);
+    } else {
+      this.wallHp = this.wallMax;
     }
+    this.barricade.restore();
+    this.barricade.setRatio(this.wallHp / this.wallMax);
+
+    if (!keepUnits) {
+      for (const u of this.units) {
+        u.root.rotation.x = 0;
+        u.stop();
+        this.despawn(u);
+      }
+    }
+
     for (const r of this.rockets) {
       r.active = false;
       r.mesh.visible = false;
@@ -347,25 +425,27 @@ export class Game {
       d.t = -1;
       d.mesh.visible = false;
     }
-    for (const w of WEAPONS) this.armory.setUnlocked(w.id, w.id === 'pistol', false);
-    this.counters.setEnabled(0, true);
-    this.counters.setEnabled(1, false);
-    this.barricade.restore();
-    for (const p of this.pads) p.hide();
+
     this.refreshPads();
 
-    this.player.root.position.set(-0.4, 0, 2.6);
-    this.player.yaw = this.player.targetYaw = 0;
-    this.player.play('Idle', 0);
-    this.assistant.root.visible = false;
+    // Spawn Boss with stage calibrated stats
+    this.boss.apex = this.stageConfig.isApex;
+    this.boss.spawn(this.currentStage);
+    this.boss.maxHp = this.stageConfig.bossHp;
+    this.boss.hp = this.boss.maxHp;
+    this.boss.attackTimer = this.stageConfig.attackInterval;
+    if (this.stageConfig.isApex) this.triggerApex();
 
-    this.boss.apex = false;
-    this.boss.spawn(1);
     this.audio.roar(0.8, 1.2);
     this.fx.dust(BOSS_HOME, 2.2, 16);
     this.fx.shake(0.35);
-    this.hud.banner('DEFEND THE CAMP!', 'Arm customers · Slay the boss', '#ffd34d', 1500);
-    PlayableAdsFlowManager.instance.startLevel(0, 99999, true);
+    this.hud.banner(`STAGE ${this.currentStage}`, `${this.stageConfig.chapterName} · ${this.stageConfig.bossName}`, this.stageConfig.tierColor, 1800);
+    PlayableAdsFlowManager.instance.startLevel(this.currentStage - 1, 99999, true);
+    this.saveCurrentState();
+  }
+
+  reset(): void {
+    this.startStage(this.currentStage, false);
   }
 
   // =============================================================================================
@@ -533,8 +613,6 @@ export class Game {
       this.warnOn = true;
       this.hud.warn(true);
     }
-    if (!this.apex && this.t >= APEX_TIME) this.triggerApex();
-    if (this.t > 102 && this.wallHp > 0) this.damageWall(this.wallMax, 0);
     this.spawnTimer -= dt;
     if (this.spawnTimer <= 0) {
       this.spawnTimer = this.expanded ? 0.9 : 1.4;
@@ -543,9 +621,7 @@ export class Game {
   }
 
   private wallFloor(): number {
-    if (this.apex) return 0;
-    // the wall cannot crumble before the final act, but it visibly erodes toward it
-    return this.wallMax * clamp(1 - (this.t - 10) / 95, 0.3, 1);
+    return 0; // Wall can be breached naturally by boss damage
   }
 
   private triggerApex(): void {
@@ -1126,7 +1202,7 @@ export class Game {
     const alive = this.units.some((u) => u.state === 'fight');
     const kills = this.apex ? 3 : 1 + Math.floor(this.bossLevel / 3);
     this.killSoldiers(kills, x);
-    const dmg = this.apex ? this.wallMax * 0.085 : bossWallDamage(this.bossLevel) * (alive ? 0.55 : 1);
+    const dmg = (this.stageConfig ? this.stageConfig.bossWallDmg : bossWallDamage(this.bossLevel)) * (alive ? 0.6 : 1);
     this.damageWall(dmg, x);
   }
 
@@ -1140,12 +1216,12 @@ export class Game {
 
   private killBoss(): void {
     this.bossesKilled++;
-    this.slowmo = 0.45;
+    this.slowmo = 0.5;
     this.fx.shake(0.6);
     this.audio.boom(1.5);
     this.audio.chime(5);
     this.hud.banner('BOSS DEFEATED!', 'Grab the loot!', '#7dff9a', 1100);
-    const L = this.bossLevel;
+    const L = this.currentStage;
     this.boss.die(
       () => {
         this.boss.centre(_a);
@@ -1159,11 +1235,27 @@ export class Game {
         for (let i = 0; i < Math.min(6, nGems); i++) this.loot.burst(_a, 'gem', 1);
         if (this.bossesKilled === 1 || Math.random() < 0.5) this.loot.burst(_a, 'chest', 1);
         if (this.tutorial <= 1) this.tutorial = 2;
+
+        // Stage Victory celebration modal after loot bursts
+        setTimeout(() => {
+          this.onStageVictory();
+        }, 1200);
       },
       () => {
-        this.respawnT = 1.6;
+        // Handled via Stage transition
       },
     );
+  }
+
+  private onStageVictory(): void {
+    const rewardCoins = this.stageConfig.coinReward;
+    const rewardGems = this.stageConfig.gemReward;
+    this.coins += rewardCoins;
+    this.gems += rewardGems;
+    this.saveData.highestStageUnlocked = Math.max(this.saveData.highestStageUnlocked, this.currentStage + 1);
+    this.saveCurrentState();
+    this.hud.showVictory(this.currentStage, rewardCoins, rewardGems);
+    PlayableAdsFlowManager.instance.trackClick(true, 1);
   }
 
   // =============================================================================================
@@ -1287,6 +1379,7 @@ export class Game {
     }
     pad.hide();
     this.refreshPads();
+    this.saveCurrentState();
     // every upgrade feeds the boss
     window.setTimeout(() => {
       if (this.phase === 'play') this.evolveBoss('Your upgrade made it adapt!');
@@ -1359,12 +1452,17 @@ export class Game {
     this.hud.flash(0.6, 700, '#ff2a14');
     this.hud.banner('THE CAMP HAS FALLEN!', '', '#ff4d3d', 1800);
     if (this.boss.state === 'idle') this.boss.play('Combo', 0.1, false);
+
+    // Show Stage Defeat modal
+    setTimeout(() => {
+      this.hud.showDefeat(this.currentStage);
+    }, 1500);
   }
 
   private finish(): void {
     this.phase = 'end';
     this.phaseT = 0;
-    this.hud.showEnd({ bosses: this.bossesKilled, coins: this.totalCoins, level: this.bossLevel, time: this.t });
+    this.hud.showDefeat(this.currentStage);
     PlayableAdsSDK.instance.logEvent(PlayableEvent.ENDCARD_SHOWN);
   }
 

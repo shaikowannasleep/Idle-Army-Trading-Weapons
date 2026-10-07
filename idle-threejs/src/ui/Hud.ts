@@ -7,6 +7,7 @@ import pistolImg from '../assets/ui/icon_pistol.png?url';
 import rifleImg from '../assets/ui/icon_rifle.png?url';
 import upgradeImg from '../assets/ui/upgrade.png?url';
 import { formatNum } from '../core/math';
+import type { GameMode } from '../game/SaveManager';
 
 const BAG_SVG = `<svg viewBox="0 0 64 64"><path d="M22 14c0-5 4-8 10-8s10 3 10 8l-4 5H26z" fill="#8a5a2b"/><path d="M12 30c0-9 9-13 20-13s20 4 20 13v16c0 8-8 12-20 12S12 54 12 46z" fill="#c98a43"/><path d="M20 22h24l-3 5H23z" fill="#6b4220"/><circle cx="32" cy="40" r="7" fill="#ffd34d" stroke="#8a5a2b" stroke-width="3"/></svg>`;
 const SHIELD_SVG = `<svg viewBox="0 0 32 32"><path d="M16 3l11 4v8c0 7-5 12-11 14C10 27 5 22 5 15V7z" fill="#d9a42c" stroke="#fff" stroke-width="2"/><path d="M16 9v15" stroke="#fff" stroke-width="2"/></svg>`;
@@ -56,6 +57,8 @@ export class Hud {
   private gemsEl: HTMLElement;
   private coinPill: HTMLElement;
   private gemPill: HTMLElement;
+  private stagePill: HTMLElement;
+  private stageText: HTMLElement;
   private bag: HTMLElement;
   private bossLv: HTMLElement;
   private bossName: HTMLElement;
@@ -80,6 +83,9 @@ export class Hud {
   private endcard: HTMLElement;
   private loading: HTMLElement;
   private lfill: HTMLElement;
+  private modeModal: HTMLElement;
+  private victoryModal: HTMLElement;
+  private defeatModal: HTMLElement;
   private trail = 1;
   private hpFrac = 1;
   private lastCoins = -1;
@@ -92,6 +98,9 @@ export class Hud {
   onContinue: () => void = () => {};
   onRetry: () => void = () => {};
   onMute: (muted: boolean) => void = () => {};
+  onNextStage?: () => void;
+  onSelectMode?: (mode: GameMode) => void;
+  onSwitchGod?: () => void;
   onLabelClick?: (id: string) => void;
   onHandClick?: () => void;
   w = 1;
@@ -106,11 +115,13 @@ export class Hud {
 
     const top = el('top');
     const res = el('res');
+    this.stagePill = el('pill stage-pill', `<span class="stage-text stroke">STAGE 1 / 40</span>`);
+    this.stageText = this.stagePill.querySelector('.stage-text')!;
     this.coinPill = el('pill coin', `<img src="${coinImg}" alt=""><span class="stroke">0</span>`);
     this.gemPill = el('pill gem', `<i class="gem-ico"></i><span class="stroke">0</span>`);
     this.coinsEl = this.coinPill.querySelector('span')!;
     this.gemsEl = this.gemPill.querySelector('span')!;
-    res.append(this.coinPill, this.gemPill);
+    res.append(this.stagePill, this.coinPill, this.gemPill);
 
     const card = el(
       'boss-card',
@@ -189,7 +200,81 @@ export class Hud {
     );
     this.lfill = this.loading.querySelector('.lfill')!;
 
-    root.append(top, this.warnEl, this.bannerEl, this.toastEl, this.hintEl, this.hand, this.flashEl, this.endcard, this.loading);
+    // Modal: Chọn chế độ chơi
+    this.modeModal = el(
+      'modal-backdrop',
+      `<div class="modal-card">
+        <h2 class="modal-title stroke">CHỌN CHẾ ĐỘ CHƠI</h2>
+        <div class="modal-sub">Trải nghiệm Mini Gameplay 40 Màn</div>
+        <div class="mode-grid">
+          <button class="mode-btn infinite" id="btn-mode-infinite">
+            <span class="mode-ico">👑</span>
+            <div class="mode-info">
+              <b>VÔ HẠN TIỀN (GOD MODE)</b>
+              <span>99M Vàng, 9K Gem, mở full vũ khí tức thì</span>
+            </div>
+          </button>
+          <button class="mode-btn classic" id="btn-mode-classic">
+            <span class="mode-ico">⚔️</span>
+            <div class="mode-info">
+              <b>CÀY TỪ ĐẦU (CLASSIC)</b>
+              <span>0 Vàng, súng lục cơ bản, cày 40 màn thử thách</span>
+            </div>
+          </button>
+        </div>
+      </div>`,
+    );
+    this.modeModal.querySelector('#btn-mode-infinite')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.modeModal.classList.remove('on');
+      this.onSelectMode?.('infinite');
+    });
+    this.modeModal.querySelector('#btn-mode-classic')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.modeModal.classList.remove('on');
+      this.onSelectMode?.('classic');
+    });
+
+    // Modal: Chiến thắng màn (Victory)
+    this.victoryModal = el(
+      'modal-backdrop',
+      `<div class="modal-card">
+        <h2 class="modal-title stroke" style="color:var(--gold);">🏆 VICTORY!</h2>
+        <div class="modal-sub victory-sub" style="color:#a7f3d0;">Boss đã bị tiêu diệt!</div>
+        <div class="victory-rewards" style="margin:16px 0; font-size:18px; color:#ffd34d;">
+          Phần thưởng: <span class="v-coins">+0 🪙</span> <span class="v-gems">+0 💎</span>
+        </div>
+        <button class="btn-primary" id="btn-next-stage">QUA MÀN TIẾP THEO ➔</button>
+      </div>`,
+    );
+    this.victoryModal.querySelector('#btn-next-stage')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.hideVictory();
+      this.onNextStage?.();
+    });
+
+    // Modal: Thất bại (Defeat Stage)
+    this.defeatModal = el(
+      'modal-backdrop',
+      `<div class="modal-card">
+        <h2 class="modal-title stroke" style="color:var(--red);">💀 TƯỜNG ĐÃ SẬP!</h2>
+        <div class="modal-sub defeat-sub">Trại lính không thể chống đỡ trước đợt tấn công.</div>
+        <button class="btn-primary" id="btn-retry-stage" style="background:linear-gradient(180deg,#ff6b6b,#e03131);">THỬ LẠI MÀN NÀY</button>
+        <button class="btn-secondary" id="btn-switch-god">CHUYỂN SANG VÔ HẠN TIỀN</button>
+      </div>`,
+    );
+    this.defeatModal.querySelector('#btn-retry-stage')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.hideDefeat();
+      this.onRetry();
+    });
+    this.defeatModal.querySelector('#btn-switch-god')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.hideDefeat();
+      this.onSwitchGod?.();
+    });
+
+    root.append(top, this.warnEl, this.bannerEl, this.toastEl, this.hintEl, this.hand, this.flashEl, this.endcard, this.loading, this.modeModal, this.victoryModal, this.defeatModal);
   }
 
   resize(w: number, h: number): void {
@@ -416,7 +501,45 @@ export class Hud {
     this.endcard.classList.remove('on');
   }
 
+  setStage(stage: number, total: number, chapter: string): void {
+    this.stageText.textContent = `STAGE ${stage} / ${total}`;
+    void chapter;
+  }
+
+  showModeSelect(): void {
+    this.modeModal.classList.add('on');
+  }
+
+  hideModeSelect(): void {
+    this.modeModal.classList.remove('on');
+  }
+
+  showVictory(stage: number, rewardCoins: number, rewardGems: number): void {
+    const sub = this.victoryModal.querySelector('.victory-sub');
+    if (sub) sub.textContent = `Vượt qua Màn ${stage} thành công!`;
+    const cEl = this.victoryModal.querySelector('.v-coins');
+    if (cEl) cEl.textContent = `+${formatNum(rewardCoins)} 🪙`;
+    const gEl = this.victoryModal.querySelector('.v-gems');
+    if (gEl) gEl.textContent = `+${rewardGems} 💎`;
+    this.victoryModal.classList.add('on');
+  }
+
+  hideVictory(): void {
+    this.victoryModal.classList.remove('on');
+  }
+
+  showDefeat(stage: number): void {
+    const sub = this.defeatModal.querySelector('.defeat-sub');
+    if (sub) sub.textContent = `Trại lính bị phá vỡ tại Màn ${stage}.`;
+    this.defeatModal.classList.add('on');
+  }
+
+  hideDefeat(): void {
+    this.defeatModal.classList.remove('on');
+  }
+
   get bossFrac(): number {
     return this.hpFrac;
   }
 }
+

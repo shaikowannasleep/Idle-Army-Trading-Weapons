@@ -5,6 +5,7 @@ import { Audio } from './core/Audio';
 import { Input } from './core/Input';
 import { Hud } from './ui/Hud';
 import { Game } from './game/Game';
+import { DevTools } from './core/DevTools';
 import { PlayableAdsSDK, PlayableEvent } from './tracking/PlayableAdsSDK';
 
 async function boot(): Promise<void> {
@@ -45,6 +46,7 @@ async function boot(): Promise<void> {
   engine.start((dt) => game.update(dt));
   hud.setLoading(1);
   hud.hideLoading();
+  new DevTools(engine, game);
   sdk.gameReady();
   sdk.logEvent(PlayableEvent.DISPLAYED);
 

@@ -656,3 +656,147 @@ body {
   width: 12px;
   height: 12px;
 }
+
+/* ---------- 40-Stage & Game Mode Styles ---------- */
+.stage-pill {
+  min-width: 110px;
+  background: linear-gradient(135deg, rgba(20, 30, 45, 0.9), rgba(12, 18, 25, 0.85));
+  border: 2px solid rgba(255, 211, 77, 0.4);
+  color: var(--gold);
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  justify-content: center;
+  padding: 0 10px;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 14, 20, 0.88);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.modal-backdrop.on {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  width: min(92vw, 380px);
+  background: linear-gradient(180deg, #1b2633 0%, #101721 100%);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 24px 20px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  text-align: center;
+  transform: scale(0.92);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.modal-backdrop.on .modal-card {
+  transform: scale(1);
+}
+
+.modal-title {
+  margin: 0 0 6px;
+  font-size: 24px;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+.modal-sub {
+  margin: 0 0 20px;
+  font-size: 14px;
+  color: #8da4be;
+  font-weight: normal;
+}
+
+.mode-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.mode-btn {
+  background: #192330;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 14px 12px;
+  color: #fff;
+  font-family: inherit;
+  font-weight: bold;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+.mode-btn:hover, .mode-btn:active {
+  transform: translateY(-2px);
+  border-color: var(--gold);
+  background: #223245;
+}
+.mode-btn.infinite {
+  border-color: rgba(255, 211, 77, 0.5);
+  background: linear-gradient(135deg, rgba(255, 211, 77, 0.12), rgba(20, 30, 45, 0.8));
+}
+.mode-btn.infinite:hover {
+  border-color: var(--gold);
+  box-shadow: 0 4px 18px rgba(255, 211, 77, 0.25);
+}
+.mode-btn .mode-ico {
+  font-size: 28px;
+  flex: none;
+}
+.mode-btn .mode-info b {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+.mode-btn .mode-info span {
+  font-size: 12px;
+  color: #8fa5bd;
+  font-weight: normal;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  margin-top: 14px;
+  background: linear-gradient(180deg, #4dff88, #23c75d);
+  border: none;
+  border-radius: 12px;
+  color: #0c2012;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(77, 255, 136, 0.35);
+  transition: transform 0.15s;
+}
+.btn-primary:active {
+  transform: scale(0.97);
+}
+
+.btn-secondary {
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  color: #c9d8ea;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.btn-secondary:active {
+  background: rgba(255, 255, 255, 0.18);
+}
+

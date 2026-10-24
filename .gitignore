@@ -25,3 +25,8 @@ node_modules/
 /extensions
 
 .claude/settings.local.json
+
+# private agent/tooling dirs
+.agents/
+.claude/
+.creator/

@@ -11,9 +11,13 @@ import machine4Url from '../assets/models/machine4.glb?url';
 import slot2Url from '../assets/models/slot2.glb?url';
 import chestUrl from '../assets/models/chest.glb?url';
 import coinUrl from '../assets/models/coin.glb?url';
+import propsUrl from '../assets/models/props.glb?url';
 import skinSoldierUrl from '../assets/ui/skin_soldier.webp?url';
 import skinCivAUrl from '../assets/ui/skin_civilianA.webp?url';
+import skinZombieUrl from '../assets/ui/skin_zombie.webp?url';
+import weaponGrungeUrl from '../assets/ui/weapon_grunge.webp?url';
 import smokeUrl from '../assets/ui/smoke.png?url';
+import shockUrl from '../assets/vfx/shock.webp?url';
 
 const MODELS = {
   boss: bossUrl,
@@ -25,8 +29,9 @@ const MODELS = {
   slot2: slot2Url,
   chest: chestUrl,
   coin: coinUrl,
+  props: propsUrl,
 };
-const TEXTURES = { skinSoldier: skinSoldierUrl, skinCivA: skinCivAUrl, smoke: smokeUrl };
+const TEXTURES = { skinSoldier: skinSoldierUrl, skinCivA: skinCivAUrl, skinZombie: skinZombieUrl, weaponGrunge: weaponGrungeUrl, smoke: smokeUrl, shock: shockUrl };
 
 export type ModelKey = keyof typeof MODELS;
 export type TextureKey = keyof typeof TEXTURES;

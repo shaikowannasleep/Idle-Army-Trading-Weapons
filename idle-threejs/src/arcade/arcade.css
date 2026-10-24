@@ -1,0 +1,697 @@
+/* ---------- arcade: hide the idle game's HUD when the arcade boots ---------- */
+#ui.arcade-boot > :not(.arc):not(.arc-menu):not(.loading) {
+  display: none !important;
+}
+.arc {
+  position: absolute;
+  inset: 0;
+}
+.arc button {
+  pointer-events: auto;
+  font-family: var(--font);
+}
+
+/* top bar */
+.arc-top {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  padding: max(10px, env(safe-area-inset-top)) 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.arc-back {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border: 0;
+  border-radius: 12px;
+  background: var(--panel);
+  color: #fff;
+  font-size: 22px;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.35);
+}
+.arc-title {
+  font-size: clamp(13px, 3.6vw, 17px);
+  letter-spacing: 1px;
+  white-space: nowrap;
+  opacity: 0.92;
+  /* title yields space so stat pills never clip on narrow phones */
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.arc-stats {
+  flex: none;
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+}
+.arc-pill {
+  min-width: 0;
+  height: 32px;
+  padding: 0 10px 0 4px;
+  font-size: 17px;
+}
+.arc-pill b,
+.arc-pill img {
+  width: 24px;
+  height: 24px;
+  flex: none;
+  display: block;
+}
+.arc-pill b svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.arc-pill.coins span {
+  color: var(--gold);
+}
+
+/* progress + boss bars */
+.arc-prog {
+  position: absolute;
+  left: 50%;
+  top: calc(max(10px, env(safe-area-inset-top)) + 48px);
+  width: min(62vw, 300px);
+  height: 18px;
+  transform: translateX(-50%);
+  border-radius: 9px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+}
+.arc-prog .fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: left;
+  background: linear-gradient(90deg, #36c6ff, #7dffcf);
+}
+.arc-prog span {
+  position: relative;
+  display: block;
+  text-align: center;
+  font-size: 13px;
+  line-height: 14px;
+}
+.arc-boss {
+  position: absolute;
+  left: 50%;
+  top: calc(max(10px, env(safe-area-inset-top)) + 74px);
+  width: min(80vw, 380px);
+  transform: translateX(-50%) scale(0.8);
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+}
+.arc-boss.on {
+  opacity: 1;
+  transform: translateX(-50%);
+}
+.arc-boss .name {
+  font-size: 15px;
+  color: #ffb0a6;
+}
+.arc-boss .bar {
+  position: relative;
+  height: 16px;
+  margin-top: 3px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid #3a0d0d;
+  overflow: hidden;
+}
+.arc-boss .fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: left;
+  background: linear-gradient(#ff7a6a, #d21f1f);
+  transition: transform 0.12s;
+}
+
+/* floats */
+.float.lose {
+  color: #ff5a5a;
+  font-size: 26px;
+}
+.float.coin {
+  color: var(--gold);
+}
+
+/* floating joystick */
+.arc-joy {
+  position: absolute;
+  left: -60px;
+  top: -60px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.18));
+  border: 3px solid rgba(255, 255, 255, 0.35);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.arc-joy.on {
+  opacity: 1;
+}
+.arc-joy i {
+  position: absolute;
+  left: 34px;
+  top: 34px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff, #9fd4ff);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+}
+
+/* level-up cards */
+.arc-cards {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: rgba(6, 10, 20, 0.62);
+  pointer-events: auto;
+}
+.arc-cards.on {
+  display: flex;
+  animation: arcIn 0.25s ease-out;
+}
+.arc-cards h2 {
+  margin: 0;
+  font-size: clamp(32px, 10vw, 48px);
+  color: var(--gold);
+}
+.arc-cards .row {
+  display: flex;
+  gap: 10px;
+  padding: 0 10px;
+}
+.arc-card {
+  position: relative;
+  width: min(30vw, 150px);
+  min-height: 190px;
+  padding: 14px 8px 12px;
+  border: 3px solid #ffe08a;
+  border-radius: 16px;
+  background: linear-gradient(#3b4a78, #1c2440);
+  color: #fff;
+  box-shadow: 0 6px 0 #0c1124, 0 0 24px rgba(255, 211, 77, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  animation: arcCard 0.35s ease-out backwards;
+}
+.arc-card:nth-child(2) {
+  animation-delay: 0.08s;
+}
+.arc-card:nth-child(3) {
+  animation-delay: 0.16s;
+}
+.arc-card .ic {
+  width: 54px;
+  height: 54px;
+}
+.arc-card .ic svg {
+  width: 100%;
+  height: 100%;
+}
+.arc-card b {
+  font-size: 17px;
+}
+.arc-card small {
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.85;
+  line-height: 1.25;
+}
+.arc-card em {
+  position: absolute;
+  top: -12px;
+  right: -8px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--gold);
+  color: var(--ink);
+  font-style: normal;
+  font-size: 13px;
+}
+@keyframes arcCard {
+  from {
+    transform: translateY(40px) scale(0.6);
+    opacity: 0;
+  }
+}
+@keyframes arcIn {
+  from {
+    opacity: 0;
+  }
+}
+
+/* end panel */
+.arc-end {
+  position: absolute;
+  inset: 0;
+  display: none;
+  place-items: center;
+  background: rgba(4, 8, 16, 0.6);
+  pointer-events: auto;
+}
+.arc-end.on {
+  display: grid;
+  animation: arcIn 0.3s ease-out;
+}
+.arc-end .panel {
+  width: min(86vw, 360px);
+  padding: 20px 18px 18px;
+  border-radius: 22px;
+  text-align: center;
+  background: linear-gradient(#24324f, #121a2e);
+  border: 3px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  animation: arcCard 0.4s ease-out;
+}
+.arc-end .panel.win {
+  border-color: #ffd34d;
+}
+.arc-end .panel.lose {
+  border-color: #ff5a5a;
+}
+.arc-end h1 {
+  margin: 0;
+  font-size: clamp(38px, 11vw, 52px);
+}
+.arc-end .win h1 {
+  color: var(--gold);
+}
+.arc-end .lose h1 {
+  color: #ff6a6a;
+}
+.arc-end p {
+  margin: 4px 0 12px;
+  font-size: 14px;
+  opacity: 0.85;
+}
+.arc-end ul {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0;
+}
+.arc-end li {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 15px;
+}
+.arc-end li span {
+  opacity: 0.8;
+}
+.arc-end .btns {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.arc-end .btns .btn {
+  padding: 11px 0 13px;
+  font-size: 15px;
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.4);
+}
+.arc-end .btns .btn.go {
+  background: linear-gradient(#5cc2ff, #1f78e0);
+  box-shadow: 0 4px 0 #0f4590;
+}
+
+/* merge defense: summon button */
+.arc-summon {
+  position: absolute;
+  left: 50%;
+  bottom: max(54px, calc(env(safe-area-inset-bottom) + 44px));
+  transform: translateX(-50%);
+  min-width: 190px;
+  padding: 12px 22px 14px;
+  border: 0;
+  border-radius: 18px;
+  background: linear-gradient(#ffd34d, #ff9a1f);
+  box-shadow: 0 6px 0 #a35400, 0 10px 24px rgba(255, 160, 30, 0.45);
+  color: #fff;
+  font-size: 22px;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.arc-summon span {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 18px;
+}
+.arc-summon img {
+  width: 22px;
+  height: 22px;
+}
+.arc-summon:active {
+  transform: translateX(-50%) translateY(4px);
+  box-shadow: 0 2px 0 #a35400;
+}
+.arc-summon.off {
+  filter: grayscale(0.7) brightness(0.8);
+}
+.arc-summon.deny {
+  animation: arcShake 0.25s;
+}
+@keyframes arcShake {
+  25% {
+    margin-left: -8px;
+  }
+  75% {
+    margin-left: 8px;
+  }
+}
+
+/* ---------- main menu ---------- */
+.arc-menu {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  padding: max(28px, env(safe-area-inset-top)) 14px max(16px, env(safe-area-inset-bottom));
+  background: linear-gradient(rgba(10, 4, 24, 0.55), transparent 32%, transparent 45%, rgba(10, 4, 24, 0.85));
+  pointer-events: auto;
+}
+.arc-menu.on {
+  display: flex;
+}
+.arc-menu .logo {
+  text-align: center;
+  font-size: clamp(52px, 17vw, 84px);
+  line-height: 0.9;
+  color: #ffd34d;
+  -webkit-text-stroke: 7px var(--ink);
+  filter: drop-shadow(0 6px 0 #7a2b00);
+  animation: arcLogo 2.4s ease-in-out infinite;
+}
+.arc-menu .logo small {
+  display: block;
+  font-size: 0.5em;
+  color: #fff;
+}
+.arc-menu .logo i {
+  display: block;
+  margin-top: 8px;
+  font-style: normal;
+  font-size: 0.24em;
+  letter-spacing: 3px;
+  color: #9fd4ff;
+  -webkit-text-stroke: 4px var(--ink);
+}
+@keyframes arcLogo {
+  50% {
+    transform: scale(1.04) rotate(-1deg);
+  }
+}
+.arc-menu .list {
+  margin-top: auto;
+  width: min(94vw, 440px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.arc-mcard {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px 10px 10px;
+  border: 3px solid var(--c);
+  border-radius: 18px;
+  background: linear-gradient(100deg, color-mix(in srgb, var(--c) 45%, #0e1426), rgba(14, 20, 38, 0.92) 60%);
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.5), 0 0 22px color-mix(in srgb, var(--c) 40%, transparent);
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+  pointer-events: auto;
+  font-family: var(--font);
+  animation: arcSlide 0.5s ease-out backwards;
+}
+.arc-mcard:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.arc-mcard:nth-child(3) {
+  animation-delay: 0.2s;
+}
+.arc-mcard:active {
+  transform: scale(0.97);
+}
+.arc-mcard .ic {
+  width: 58px;
+  height: 58px;
+  flex: none;
+  padding: 8px;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.35);
+}
+.arc-mcard .ic svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.arc-mcard .tx {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.arc-mcard b {
+  font-size: 21px;
+  letter-spacing: 0.5px;
+}
+.arc-mcard em {
+  font-style: normal;
+  font-size: 12px;
+  color: var(--c);
+}
+.arc-mcard small {
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.85;
+}
+.arc-mcard .lv {
+  position: absolute;
+  top: -11px;
+  right: 12px;
+  padding: 1px 9px;
+  border-radius: 10px;
+  background: var(--c);
+  font-size: 13px;
+}
+.arc-menu .foot {
+  margin-top: 12px;
+  font-size: 15px;
+  opacity: 0.85;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+@keyframes arcSlide {
+  from {
+    transform: translateX(-60px);
+    opacity: 0;
+  }
+}
+
+/* ---------- zombie theme (horde + merge): rusted steel plates, hazard cards, blood (art: tools/ui-art.py) ---------- */
+.arc[data-theme='zombie'] {
+  --plate: url('../assets/ui/zombie/plate.webp');
+  --toxic: #b6ff3b;
+}
+.arc[data-theme='zombie'] .arc-back,
+.arc[data-theme='zombie'] .arc-pill {
+  background: none;
+  border: 9px solid transparent;
+  border-image: var(--plate) 28 fill / 9px stretch;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.45);
+}
+.arc[data-theme='zombie'] .arc-pill {
+  padding: 0 4px 0 0;
+}
+.arc[data-theme='zombie'] .arc-back {
+  font-size: 18px;
+  line-height: 1;
+  padding: 0;
+}
+.arc[data-theme='zombie'] .arc-title {
+  color: var(--toxic);
+}
+.arc[data-theme='zombie'] .arc-prog {
+  border: 2px solid #11140f;
+  border-radius: 4px;
+  background: repeating-linear-gradient(135deg, #1c1f1a 0 8px, #262a22 8px 16px);
+  box-shadow: 0 0 0 2px #4a4f48, 0 3px 6px rgba(0, 0, 0, 0.5);
+}
+.arc[data-theme='zombie'] .arc-prog .fill {
+  background: linear-gradient(#d8ff6a, #6fbf1f 55%, #3f8a12);
+}
+.arc[data-theme='zombie'] .arc-cards {
+  background: radial-gradient(ellipse at 50% 45%, rgba(40, 6, 6, 0.55), rgba(5, 3, 3, 0.88) 75%);
+}
+.arc[data-theme='zombie'] .arc-cards h2 {
+  position: relative;
+  padding: 26px 30px;
+  color: var(--toxic);
+  font-size: clamp(26px, 8.4vw, 42px);
+  white-space: nowrap;
+  letter-spacing: 2px;
+  background: url('../assets/ui/zombie/splat.webp') center / contain no-repeat;
+  text-shadow: 0 0 18px rgba(182, 255, 59, 0.55);
+}
+.arc[data-theme='zombie'] .arc-card {
+  --cw: min(30vw, 150px);
+  width: var(--cw);
+  aspect-ratio: 320 / 440;
+  min-height: 0;
+  padding: calc(var(--cw) * 0.18) 8px 10px;
+  justify-content: flex-start;
+  gap: 4px;
+  border: 0;
+  border-radius: 8px;
+  background: url('../assets/ui/zombie/card.webp') center / 100% 100%;
+  box-shadow: 0 8px 0 #0b0c0a, 0 10px 24px rgba(0, 0, 0, 0.7);
+  transition: transform 0.12s;
+}
+.arc[data-theme='zombie'] .arc-card:active {
+  transform: scale(0.95);
+}
+.arc[data-theme='zombie'] .arc-card .ic {
+  width: calc(var(--cw) * 0.56);
+  height: calc(var(--cw) * 0.56);
+  flex: none;
+  display: grid;
+  place-items: center;
+}
+.arc[data-theme='zombie'] .arc-card .ic svg {
+  width: 62%;
+  height: 62%;
+  filter: drop-shadow(0 0 8px rgba(182, 255, 59, 0.45));
+}
+.arc[data-theme='zombie'] .arc-card .ic img {
+  width: 165%;
+  max-width: none;
+  filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.8));
+}
+.arc[data-theme='zombie'] .arc-card b {
+  margin-top: 4px;
+  font-size: 15px;
+  color: #ffe08a;
+}
+.arc[data-theme='zombie'] .arc-card small {
+  color: #d9dfd0;
+  font-size: 11.5px;
+}
+.arc[data-theme='zombie'] .arc-card em {
+  top: -10px;
+  right: -6px;
+  border-radius: 3px;
+  background: var(--toxic);
+  color: #10140a;
+  transform: rotate(6deg);
+  box-shadow: 0 2px 0 #3c5a10;
+}
+.arc[data-theme='zombie'] .arc-end .panel {
+  border: 18px solid transparent;
+  border-image: var(--plate) 28 fill / 18px stretch;
+  border-radius: 0;
+  background: none;
+}
+
+/* tutorial spotlight: dim everything except a pulsing circle; clicks pass through to the game */
+.arc-tut {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s;
+  z-index: 6;
+}
+/* the idle HUD's global .hand is clickable: nothing in the coach overlay may eat taps */
+.arc-tut * {
+  pointer-events: none !important;
+}
+.arc-tut.on {
+  opacity: 1;
+}
+.arc-tut .hole {
+  position: absolute;
+  left: calc(var(--x) - var(--r));
+  top: calc(var(--y) - var(--r));
+  width: calc(var(--r) * 2);
+  height: calc(var(--r) * 2);
+  border-radius: 50%;
+  box-shadow: 0 0 0 200vmax rgba(6, 10, 22, 0.62), inset 0 0 18px 6px rgba(6, 10, 22, 0.45);
+}
+.arc-tut .hole::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 4px solid #fff6b0;
+  box-shadow: 0 0 18px #ffe26a;
+  animation: arc-tut-ring 1s ease-out infinite;
+}
+@keyframes arc-tut-ring {
+  0% { transform: scale(0.92); opacity: 1; }
+  100% { transform: scale(1.18); opacity: 0; }
+}
+.arc-tut .hand {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  font-size: 54px;
+  line-height: 1;
+  transform-origin: 30% 10%;
+  filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.5));
+  animation: arc-tut-tap 0.9s ease-in-out infinite;
+}
+.arc-tut.drag .hand {
+  animation: arc-tut-drag 1.6s ease-in-out infinite;
+}
+@keyframes arc-tut-tap {
+  0%, 100% { transform: translate(-20%, 10%) scale(1); }
+  50% { transform: translate(-20%, 0%) scale(0.85); }
+}
+@keyframes arc-tut-drag {
+  0% { transform: translate(-20%, 10%) scale(0.9); opacity: 0; }
+  15% { transform: translate(-20%, 10%) scale(0.85); opacity: 1; }
+  75% { transform: translate(calc(-20% + var(--dx)), calc(10% + var(--dy))) scale(0.85); opacity: 1; }
+  100% { transform: translate(calc(-20% + var(--dx)), calc(10% + var(--dy))) scale(1); opacity: 0; }
+}
+.arc-tut .tip {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: calc(var(--y) + var(--r) + 64px);
+  text-align: center;
+  font-size: 24px;
+  line-height: 1.15;
+  color: #fff;
+  white-space: pre-line;
+  -webkit-text-stroke: 6px #10161b;
+  paint-order: stroke fill;
+}
+.arc-tut.above .tip {
+  top: auto;
+  bottom: calc(100% - var(--y) + var(--r) + 18px);
+}

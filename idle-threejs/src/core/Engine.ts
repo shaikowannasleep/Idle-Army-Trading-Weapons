@@ -8,7 +8,7 @@ import * as THREE from 'three';
  */
 export class Engine {
   readonly renderer: THREE.WebGLRenderer;
-  readonly scene = new THREE.Scene();
+  scene = new THREE.Scene();
   readonly camera = new THREE.PerspectiveCamera(38, 1, 0.5, 140);
 
   /** URL quality overrides (?dpr=1&shadows=0&aa=0) for low-end devices / profiling. */

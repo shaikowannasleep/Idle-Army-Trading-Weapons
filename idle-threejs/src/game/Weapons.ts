@@ -56,7 +56,6 @@ function part(g: THREE.BufferGeometry, color: THREE.Color, pos: [number, number,
   const c = new Float32Array(n * 3);
   for (let i = 0; i < n; i++) color.toArray(c, i * 3);
   geo.setAttribute('color', new THREE.BufferAttribute(c, 3));
-  geo.deleteAttribute('uv');
   return geo;
 }
 const box = (w: number, h: number, d: number) => new THREE.BoxGeometry(w, h, d);
@@ -117,7 +116,8 @@ function rocket(): THREE.BufferGeometry {
   );
 }
 
-export const proceduralMaterial = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.45, metalness: 0.35 });
+/** Vertex-coloured; the arcade adds a brushed/worn grunge map (UVs are kept per part for it). */
+export const proceduralMaterial = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.38, metalness: 0.55 });
 
 /** Rocket projectile mesh (shared). */
 export function rocketProjectile(): THREE.BufferGeometry {
@@ -155,6 +155,8 @@ export function buildWeaponKit(customer: GLTF): WeaponKit {
   const find = (n: string) => customer.scene.getObjectByName(n) as THREE.SkinnedMesh;
   const rifle = find('3');
   const pistol = find('2');
+  // the FBX pistol has no UVs and its vertex colours render near-white: give it gunmetal instead
+  pistol.material = new THREE.MeshStandardMaterial({ color: '#3a3f47', roughness: 0.4, metalness: 0.6 });
   const rifleGeo = rifle.geometry;
   rifleGeo.computeBoundingBox();
   const anchor = rifleGeo.boundingBox!.getCenter(new THREE.Vector3());
@@ -208,4 +210,41 @@ export function displayMesh(kit: WeaponKit, id: WeaponId): THREE.Mesh {
   m.scale.setScalar(d.scale);
   m.castShadow = false;
   return m;
+}
+
+/** Renders a weapon's display mesh to a transparent PNG data URL (UI card art). One throwaway GL context for the batch. */
+export function weaponPortraits(kit: WeaponKit, ids: WeaponId[], env: THREE.Texture | null, size = 256): Record<string, string> {
+  const r = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  r.setSize(size, size, false);
+  r.outputColorSpace = THREE.SRGBColorSpace;
+  r.toneMapping = THREE.ACESFilmicToneMapping;
+  const scene = new THREE.Scene();
+  scene.environment = env;
+  scene.environmentIntensity = 0.6;
+  scene.add(new THREE.HemisphereLight('#ffffff', '#3a3028', 2));
+  const key = new THREE.DirectionalLight('#fff0d8', 3.2);
+  key.position.set(2, 4, 5);
+  const rim = new THREE.DirectionalLight('#8fd0ff', 2.4);
+  rim.position.set(-4, 2, -3);
+  scene.add(key, rim);
+  const cam = new THREE.PerspectiveCamera(28, 1, 0.1, 50);
+  const out: Record<string, string> = {};
+  for (const id of ids) {
+    const m = displayMesh(kit, id);
+    const g = new THREE.Group();
+    g.add(m);
+    g.rotation.set(0.35, -0.5, 0.42); // hero 3/4 angle, muzzle up-right
+    scene.add(g);
+    const box = new THREE.Box3().setFromObject(g);
+    const c = box.getCenter(new THREE.Vector3());
+    const rad = box.getSize(new THREE.Vector3()).length() / 2;
+    cam.position.set(c.x, c.y, c.z + rad / Math.tan(THREE.MathUtils.degToRad(14)) * 1.02);
+    cam.lookAt(c);
+    r.render(scene, cam);
+    out[id] = r.domElement.toDataURL('image/png');
+    scene.remove(g);
+  }
+  r.dispose();
+  r.forceContextLoss();
+  return out;
 }

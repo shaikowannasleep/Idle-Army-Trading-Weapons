@@ -7,6 +7,7 @@ import { Hud } from './ui/Hud';
 import { Game } from './game/Game';
 import { DevTools } from './core/DevTools';
 import { PlayableAdsSDK, PlayableEvent } from './tracking/PlayableAdsSDK';
+import { Arcade } from './arcade/Arcade';
 
 async function boot(): Promise<void> {
   const sdk = PlayableAdsSDK.instance;
@@ -34,6 +35,10 @@ async function boot(): Promise<void> {
     }),
   ]);
 
+  // the arcade (3 mini games) is the default; ?game=armory or a bare ?capture keeps the original idle game
+  const g = Engine.params.get('game');
+  if (g ? g !== 'armory' : !Engine.params.has('capture')) return bootArcade(engine, assets, audio, hud, input, sdk);
+
   const game = new Game(engine, assets, audio, hud, input);
   await game.warmup();
   sdk.logEvent(PlayableEvent.LOADED);
@@ -43,7 +48,19 @@ async function boot(): Promise<void> {
     audio.suspend(hidden);
   });
   game.reset();
-  engine.start((dt) => game.update(dt));
+  if (Engine.params.has('capture')) {
+    // tools/trailer.mjs steps the sim by hand so every video frame is deterministic
+    (window as unknown as Record<string, unknown>).__step = (dt: number) => {
+      game.update(dt);
+      engine.renderer.shadowMap.needsUpdate = true;
+      engine.renderer.render(engine.scene, engine.camera);
+      // DOM/CSS animations run on the wall clock: advance them by the same dt
+      for (const a of document.getAnimations()) {
+        a.pause();
+        a.currentTime = Number(a.currentTime ?? 0) + dt * 1000;
+      }
+    };
+  } else engine.start((dt) => game.update(dt));
   hud.setLoading(1);
   hud.hideLoading();
   new DevTools(engine, game);
@@ -61,6 +78,45 @@ async function boot(): Promise<void> {
   });
   (window as unknown as Record<string, unknown>).__game = game.debugApi();
   (window as unknown as Record<string, unknown>).__ready = true;
+}
+
+async function bootArcade(engine: Engine, assets: Awaited<ReturnType<typeof loadAssets>>, audio: Audio, hud: Hud, input: Input, sdk: PlayableAdsSDK): Promise<void> {
+  input.enabled = false;
+  hud.root.classList.add('arcade-boot');
+  const arcade = new Arcade(engine, assets, audio, document.getElementById('ui') as HTMLElement);
+  await arcade.warmup();
+  sdk.logEvent(PlayableEvent.LOADED);
+  sdk.init((hidden) => {
+    engine.setHidden(hidden);
+    audio.suspend(hidden);
+  });
+  const w = window as unknown as Record<string, unknown>;
+  if (Engine.params.has('capture')) {
+    arcade.capture = true;
+    w.__step = (dt: number) => {
+      arcade.update(dt);
+      engine.renderer.shadowMap.needsUpdate = true;
+      engine.renderer.render(engine.scene, engine.camera);
+      for (const a of document.getAnimations()) {
+        a.pause();
+        a.currentTime = Number(a.currentTime ?? 0) + dt * 1000;
+      }
+    };
+  } else engine.start((dt) => arcade.update(dt));
+  hud.setLoading(1);
+  hud.hideLoading();
+  sdk.gameReady();
+  sdk.logEvent(PlayableEvent.DISPLAYED);
+  w.__perf = () => ({
+    frameMs: engine.frameMs,
+    dpr: engine.pixelRatio,
+    calls: engine.renderer.info.render.calls,
+    tris: engine.renderer.info.render.triangles,
+    geos: engine.renderer.info.memory.geometries,
+    textures: engine.renderer.info.memory.textures,
+  });
+  w.__arcade = arcade.debugApi();
+  w.__ready = true;
 }
 
 boot().catch((e) => {

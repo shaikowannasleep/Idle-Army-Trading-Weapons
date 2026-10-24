@@ -277,6 +277,55 @@ class GroundFx {
   }
 }
 
+/** Test00's 3x3 shockwave flipbook (Par/HandGun/explosion_spritesheet_3x3) as pooled additive billboards. */
+class Shocks {
+  readonly group = new THREE.Group();
+  private pool: { s: THREE.Sprite; t: number; dur: number; size: number }[] = [];
+
+  constructor(tex: THREE.Texture, n = 32) {
+    for (let i = 0; i < n; i++) {
+      const map = tex.clone();
+      map.repeat.set(1 / 3, 1 / 3);
+      const s = new THREE.Sprite(new THREE.SpriteMaterial({ map, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }));
+      s.visible = false;
+      s.renderOrder = 11;
+      this.group.add(s);
+      this.pool.push({ s, t: 0, dur: 1, size: 1 });
+    }
+  }
+
+  spawn(p: THREE.Vector3, size: number, r: number, g: number, b: number, dur = 0.32): void {
+    const o = this.pool.find((x) => !x.s.visible) ?? this.pool[0];
+    o.t = 0;
+    o.dur = dur;
+    o.size = size;
+    o.s.position.copy(p);
+    o.s.material.color.setRGB(r, g, b);
+    o.s.material.rotation = Math.random() * Math.PI * 2;
+    o.s.visible = true;
+  }
+
+  clear(): void {
+    for (const o of this.pool) o.s.visible = false;
+  }
+
+  update(dt: number): void {
+    for (const o of this.pool) {
+      if (!o.s.visible) continue;
+      o.t += dt;
+      const k = o.t / o.dur;
+      if (k >= 1) {
+        o.s.visible = false;
+        continue;
+      }
+      const f = Math.min(8, Math.floor(k * 9));
+      o.s.material.map!.offset.set((f % 3) / 3, 1 - (Math.floor(f / 3) + 1) / 3);
+      o.s.scale.setScalar(o.size * (0.7 + 0.5 * k));
+      o.s.material.opacity = 1 - k * k;
+    }
+  }
+}
+
 const _v = new THREE.Vector3();
 
 /** High-level effect vocabulary used by gameplay. */
@@ -285,15 +334,18 @@ export class Fx {
   readonly smoke: Particles;
   readonly tracers = new Tracers(160);
   readonly ground: GroundFx;
+  readonly shocks: Shocks | null;
   /** Camera shake "trauma" in [0,1]; offset ~ trauma^2. */
   trauma = 0;
 
-  constructor(scene: THREE.Scene, smokeTex: THREE.Texture) {
+  constructor(scene: THREE.Scene, smokeTex: THREE.Texture, shockTex?: THREE.Texture) {
     const atlas = makeFxAtlas();
     this.add = new Particles(900, atlas, THREE.AdditiveBlending, 12);
     this.smoke = new Particles(260, smokeTex, THREE.NormalBlending, 8);
     this.ground = new GroundFx(atlas);
+    this.shocks = shockTex ? new Shocks(shockTex) : null;
     scene.add(this.smoke.mesh, this.add.mesh, this.tracers.mesh, this.ground.group);
+    if (this.shocks) scene.add(this.shocks.group);
   }
 
   shake(amount: number): void {
@@ -305,6 +357,7 @@ export class Fx {
     this.smoke.clear();
     this.tracers.clear();
     this.ground.clear();
+    this.shocks?.clear();
     this.trauma = 0;
   }
 
@@ -313,6 +366,7 @@ export class Fx {
     this.smoke.update(dt);
     this.tracers.update(dt);
     this.ground.update(dt);
+    this.shocks?.update(dt);
     this.trauma = Math.max(0, this.trauma - dt * 1.6);
   }
 
@@ -390,6 +444,16 @@ export class Fx {
       });
     }
     this.ground.ring(p, 3.2 * size, 0xffa040, 0.5);
+    this.shocks?.spawn(_v.set(p.x, p.y + 0.6, p.z), 5 * size, 1, 0.85, 0.6, 0.45);
+  }
+
+  /** Death burst: goo droplets, a dark puff and a shockwave crescent. */
+  splat(p: THREE.Vector3, r: number, g: number, b: number, size = 1): void {
+    for (let i = 0; i < 6; i++) {
+      this.add.emit({ x: p.x, y: p.y, z: p.z, vx: rand(-3, 3), vy: rand(2, 5.5), vz: rand(-3, 3), life: rand(0.3, 0.5), size: rand(0.16, 0.3) * size, sizeEnd: 0.04, r, g, b, gravity: 14, drag: 1.5, tile: Tile.Spark });
+    }
+    this.smoke.emit({ x: p.x, y: p.y, z: p.z, vy: 0.8, life: 0.55, size: 0.8 * size, sizeEnd: 1.8 * size, r: r * 0.35, g: g * 0.35, b: b * 0.35, a: 0.7, drag: 2, tile: Math.floor(Math.random() * 4) });
+    this.shocks?.spawn(p, 2.2 * size, r, g, b, 0.3);
   }
 
   /** Smoke puff + sparkles used for unit transformation / spawning. */

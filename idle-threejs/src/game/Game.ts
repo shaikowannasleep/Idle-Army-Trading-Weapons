@@ -30,6 +30,7 @@ import {
   WALL_Z,
 } from './layout';
 import { bezier, clamp, damp, easeOutCubic, formatNum, lerp, rand } from '../core/math';
+import { Trailer } from './Trailer';
 import { PlayableAdsFlowManager } from '../tracking/PlayableAdsFlowManager';
 import { PlayableAdsSDK, PlayableEvent } from '../tracking/PlayableAdsSDK';
 import { SaveManager, type GameMode, type PlayerSaveData } from './SaveManager';
@@ -98,6 +99,8 @@ export class Game {
   stageConfig: StageConfig = calculateStageConfig(1);
 
   // ---- run state ----
+  /** Scripted 15 s ad trailer (?trailer=<stage>), driven by tools/trailer.mjs. */
+  trailer: Trailer | null = null;
   private phase: Phase = 'intro';
   private t = 0;
   private phaseT = 0;
@@ -277,6 +280,8 @@ export class Game {
     return {
       teleport: (x: number, z: number) => this.player.root.position.set(x, 0, z),
       forceLose: () => this.collapse(),
+      trailerStart: () => this.trailer?.start(),
+      initTrailer: (stage: number) => this.initTrailer(stage),
       jumpStage: (s: number) => this.startStage(s, false),
       setGodMode: () => this.initMode('infinite'),
       setClassicMode: () => this.initMode('classic'),
@@ -295,6 +300,28 @@ export class Game {
         expanded: this.expanded,
       }),
     };
+  }
+
+  private initTrailer(stage: number): void {
+    this.initMode('infinite');
+    this.startStage(stage, false);
+    this.hud.hideModeSelect();
+    const b = this.boss;
+    // the trailer scripts the kill: soldiers must not finish the boss early
+    b.maxHp *= 200;
+    b.hp = b.maxHp;
+    this.naturalIdx = NATURAL_EVOLVE.length; // evolveBoss would reset maxHp mid-trailer
+    this.trailer = new Trailer({
+      cam: this.engine.camera,
+      trauma: () => this.fx.trauma,
+      flash: (s, ms, c) => this.hud.flash(s, ms, c),
+      shake: (a) => this.fx.shake(a),
+      slam: () => this.bossImpact(),
+      hit: (d) => this.hitBoss(d, true, b.centre(_c)),
+      bossHp: () => b.hp,
+      bossMax: () => b.maxHp,
+      setBossHp: (hp) => (b.hp = hp),
+    });
   }
 
   /** Make every pooled object visible once and compile shaders up-front (no hitch on first use). */
@@ -598,6 +625,7 @@ export class Game {
     this.blobs.end();
     this.fx.update(dt);
     this.updateCamera(rawDt);
+    this.trailer?.update(rawDt);
     this.updateHud(rawDt);
   }
 
@@ -1248,6 +1276,7 @@ export class Game {
   }
 
   private onStageVictory(): void {
+    if (this.trailer) return;
     const rewardCoins = this.stageConfig.coinReward;
     const rewardGems = this.stageConfig.gemReward;
     this.coins += rewardCoins;
